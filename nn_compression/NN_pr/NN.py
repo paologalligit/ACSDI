@@ -5,7 +5,7 @@ from NN_pr import activation_function as af
 
 from sklearn.metrics import r2_score
 
-N_FEATURES = 71
+N_FEATURES = 72
 N_CLASSES = 1
 
 
@@ -31,9 +31,7 @@ class NN:
         self.centers = []
         self.idx_layers = []  
         self.cluster=0      
-
-        
-        
+                
         # self.targetForUpd = np.zeros((self.numEx, N_CLASSES), dtype=int)
         # for i in range(self.numEx):
         #     self.targetForUpd[i, training[1][i]] = 1

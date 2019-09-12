@@ -66,9 +66,7 @@ def ws_update_layers(self, deltasUpd, momentumUpdate):
         self.centers[i] += np.array(cg).reshape(self.cluster[i],1)
 
         self.idx_layers[i][1] += self.v[i][1]
-        #v_temp.append([cg, deltasUpd[i][1]])
-
-        
+        #v_temp.append([cg, deltasUpd[i][1]])        
     
     
 def ws_updateMomentum(self, X, t, nEpochs, learningRate, momentumUpdate):

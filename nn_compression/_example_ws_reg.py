@@ -26,7 +26,7 @@ std_mom = NN.NN.updateMomentum
 std_layers = NN.NN.update_layers
 
 # for n in [[i] for i in range(80, 140, 10)]: #8*300=2400  300*100=3000 100*1=100
-for n in [[40], [60], [120], [150], [200]]:
+for n in [[60], [70], [90], [110], [120]]:
     nn = NN.NN(training=[X_scaled, y_scaled], testing=[X_test_scaled, y_test_scaled], lr=0.00007, mu=.99, minibatch=100)
     nn.addLayers(n, ['relu', 'linear'])
     nn.train(0, num_epochs=1000, X_test=X_test_scaled, y_test=y_test_scaled)

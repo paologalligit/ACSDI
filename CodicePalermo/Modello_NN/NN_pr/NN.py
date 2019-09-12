@@ -118,6 +118,7 @@ class NN:
 
             y = outputs[-1]
             deltas = []
+
             deltas.append(self.act_fun[-1](y, True) * (y - t[indexLow:indexHigh]))
             #deltas.append(self.act_fun[-1](y, True) * (y - t[indexLow:indexHigh])*1/self.minibatch)
             for i in range(self.nHidden):

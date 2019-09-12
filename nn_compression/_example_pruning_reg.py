@@ -36,7 +36,7 @@ tr = []
 te=[]
 s=[]
 normal_upd = NN.NN.update_layers
-for n in [[35], [40], [50], [80], [85]]:
+for n in [[60], [70], [90], [110], [120]]:
     print('############################### NEURONS {} ###############################'.format(n[0]))
     nn = NN.NN(training=[X_scaled, y_scaled], testing=[X_test_scaled, y_test_scaled], lr=0.01, mu=.99, minibatch=100)
     NN.NN.update_layers = normal_upd
@@ -44,7 +44,7 @@ for n in [[35], [40], [50], [80], [85]]:
     a,b=nn.train(0, num_epochs=500, X_test=X_test_scaled, y_test=y_test_scaled)
 
     w = (nn.getWeigth())
-    for p in [10,20,30,40, 50, 60, 70, 80 ,90]:
+    for p in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
         print("Pruning="+str(p)+"%")
         w1=np.copy(w)
         pr.set_pruned_layers(nn, p, w1)
