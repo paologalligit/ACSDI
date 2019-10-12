@@ -16,10 +16,10 @@
 
 \tableofcontents
 
-\chapter{La rete neurale artificiale}
+\chapter{Le reti neurali artificiali}
 
 \linespread{1.4}\selectfont
-\section{Che cos’è e quando è nata}
+\section{Definizione e origini storiche}
 L’intuizione di replicare l’attività neurale che avviene nel cervello umano quando apprende, risale agli inizi degli anni ‘40, quando venne teorizzato un primo modello di neurone da McCulloch e Pitts (1943) [artificial intelligence a modern approach, pag. 728]. Il parallelo è molto stretto: così come il compito di un neurone è quello di ricevere, elaborare e ritrasmettere impulsi elettrici all’interno del sistema nervoso cerebrale, quello di un neurone artificiale è ricevere un certo dato in input ed attivarsi o meno in base alla propria "importanza" (peso assegnato ai propri collegamenti in entrata) e alla sua funzione di attivazione (di cui si parlerà in seguito).
 
 \begin{figure}
@@ -29,13 +29,13 @@ L’intuizione di replicare l’attività neurale che avviene nel cervello umano
 \end{center}
 \end{figure}
 
-\section{Per cosa viene usata}
+\section{Applicazioni}
 Le reti neurali vengono impiegate nell’attività di previsione (regressione) o classificazione.
 Nel primo caso rientrano, ad esempio, le previsioni di vendita: riuscire a prevedere il prezzo di un immobile in base a fattori che lo descrivono (i metri quadrati, il numero di stanze, la posizione centrale o meno in un centro abitato, ecc…) o prevedere l’andamento di un titolo azionario in borsa.
 Altro problema è quello invece della classificazione: si richiede, in questo caso, che la rete, dato un oggetto, ne restituisca la classe di appartenenza; tipico esempio è quello della classificazione di numeri scritti a mano o, date una serie di immagini, riconoscere quelle in cui è presente un particolare soggetto.
 In questo elaborato si andrà ad affrontare il problema legato alla regressione.
 
-\section{Architettura}
+\section{Architettura di una rete neurale}
 Una rete, per essere definita tale, deve essere composta da almeno 3 strati:
 \begin{enumerate}
 \item{input}
@@ -57,17 +57,27 @@ In questo elaborato ci si concentrerà sulla tipologia densamente connessa, ossi
 \subsection{Componenti}
 Come detto sopra, la rete è composta da strati; gli strati, a loro volta, sono un insieme di neuroni, ognuno dei quali ha associato un peso ($w$) per ogni collegamento in entrata e un bias ($b$). Questi sono stati impostati randomicamente, in un intervallo tra 0 e 1. Questi due sono gli unici parametri che, una volta inizializzati, vengono modificati automaticamente dalla rete durante il training. I restanti parametri, invece, rimangono tali durante tutte le fasi di addestramento del modello; inoltre l'unico modo per individuare tali parametri è empiricamente: questi prendono il nome di \textbf{\textit{iperparametri}}.
 
-\subsection{Iperparametri}\label{iperparametri}
-In questa categoria rientrano:
-\begin{itemize}
-\item{learning rate}: indica il grado con cui la rete modifica i propri pesi durante la fase di back-propagation. Negli esperimenti di cui si parlerà in questo elaborato sono stati usati diversi learning rate ed ogni volta verranno specificati
-\item{numero di epoche}: indica il numero di volte che la rete compie un passo di feed-forward e back-propagation (indipendentemente dal batch size)
-\item{batch size}: indica la quantità di esempi presi in considerazione per la fase di feed-forward
-\item{numero di neuroni per strato}: indica il numero di neuroni per singolo strato
-\item{funzione d'attivazione}: funzione che attiva o meno il singolo neurone in base alla formula $$\Sigma\left(weight * input\right) + bias$$
-\end{itemize}
+\section{Algoritmo feedforward}
+Le connessioni tra i neuroni di uno strato e quelli del successivo sono monodirezionali, configurazione che porta ad avere un grafo diretto e aciclico. Quindi il flusso di dati che scorre nella rete viaggia dallo strato di input a quello di output senza che ci siano loop, il che implica anche che non ci siano interazioni tra neuroni dello stesso strato.
 
-\section{Come funziona}
+\subsection{Il calcolo tra strati}
+Nell'implementazione pratica (vedi sezione X) viene usata una matrice dei pesi per rappresentare le connessioni tra strati. 
+Siano 
+\begin{itemize}
+\item{$W_{ih}$} la matrice dei pesi che rappresenta le connessioni tra strato input e hidden
+\item{$W_{ho}$} la matrice dei pesi che rappresenta le connessioni tra strato hidden e output
+\item{$b_h$} il vettore dei bias dello strato hidden
+\item{$b_o$} il vettore dei bias dello strato di output
+\item{$x$} il vettore di input
+\item{$f$} la funzione d'attivazione scelta per lo strato
+\end{itemize}
+Per eseguire l'algoritmo di feed-forward occorre calcolare
+$$\alpha = f\left(x \cdot W_{ih} + b_h\right)$$
+Una volta ottenuto $\alpha$ si procede analogamente con lo strato successivo
+$$prediction = f\left(\alpha \cdot W_{ho} + b_o\right)$$
+Dato che la rete usata per fare regressione ha un solo neurone nello strato di output, $prediction$ sarà un unico valore e sarà la previsione della rete in base all'input ricevuto.
+
+\section{Addestramento di una rete neurale}
 Per continuare il parallelo con una rete neurale umana, così come per l'attività di apprendimento occorre studiare, anche una rete neurale artificiale ha bisogno di "studiare": questa fase viene detta fase di addestramento (training).
 Una volta selezionato il dataset contenenti i caratteri che la rete dovrà apprendere, si procede a dividere tale insieme in due sottoinsiemi:
 
@@ -90,38 +100,27 @@ Terminata la fase di training occorre verificare il comportamente della rete su 
 \item{\textbf{\textit{underfitting}}}: è l'opposto del caso precedente. Si verifica quando il modello non riesce ad imparare il pattern domimante nei dati di train, risultando in previsioni poco accurate.
 \end{itemize}
 
-\section{Algoritmo feedforward}
-Le connessioni tra i neuroni di uno strato e quelli del successivo sono monodirezionali, configurazione che porta ad avere un grafo diretto e aciclico. Quindi il flusso di dati che scorre nella rete viaggia dallo strato di input a quello di output senza che ci siano loop, il che implica anche che non ci siano interazioni tra neuroni dello stesso strato.
-
-\subsection{Il calcolo tra strati}
-Nell'implementazione pratica (vedi sezione X) viene usata una matrice dei pesi per rappresentare le connessioni tra strati. 
-Siano 
-\begin{itemize}
-\item{$W_{ih}$} la matrice dei pesi che rappresenta le connessioni tra strato input e hidden
-\item{$W_{ho}$} la matrice dei pesi che rappresenta le connessioni tra strato hidden e output
-\item{$b_h$} il vettore dei bias dello strato hidden
-\item{$b_o$} il vettore dei bias dello strato di output
-\item{$x$} il vettore di input
-\item{$f$} la funzione d'attivazione scelta per lo strato
-\end{itemize}
-Per eseguire l'algoritmo di feed-forward occorre calcolare
-$$\alpha = f\left(x \cdot W_{ih} + b_h\right)$$
-Una volta ottenuto $\alpha$ si procede analogamente con lo strato successivo
-$$prediction = f\left(\alpha \cdot W_{ho} + b_o\right)$$
-Dato che la rete usata per fare regressione ha un solo neurone nello strato di output, $prediction$ sarà un unico valore e sarà la previsione della rete in base all'input ricevuto.
-
-\section{Algoritmo back-propagation}
+\section{Algoritmo di back-propagation}
 Una volta che l’informazione ha raggiunto lo strato di output ho la previsione; tuttavia questa conterrà dell’errore. Per ridurlo si usa un apposito algoritmo di propagazione all’indietro che regola i pesi associati ai collegamenti tra singoli neuroni, partendo dallo strato più esterno a quello più interno.
 
 Si parte calcolando la loss function dell’output, che può essere l’errore medio assoluto (scelta fatta per gli esperimenti dell'elaborato) o l’errore quadratico medio, e se ne calcola la derivata parziale rispetto ai pesi dei collegamenti dei neuroni di output. A questo risultato si moltiplica il learning rate e si sottrae al peso $$W^n_x = W_x - \eta \left(\frac{\delta Error}{\delta W_x}\right)$$ dove $W^n_x$ è il valore del nuovo peso, $W_x$ il vecchio peso, $\eta$ il learning rate e tra parentesi $\frac{\delta Error}{\delta W_x}$ la derivata parziale dell'errore rispetto ai pesi. 
 
 Una volta fatto questo calcolo con la matrice dei pesi strato hidden/output, si fa la stessa cosa per quella input/hidden.
 
+\subsection{Iperparametri}\label{iperparametri}
+In questa categoria rientrano:
+\begin{itemize}
+\item{learning rate}: indica il grado con cui la rete modifica i propri pesi durante la fase di back-propagation. Negli esperimenti di cui si parlerà in questo elaborato sono stati usati diversi learning rate ed ogni volta verranno specificati
+\item{numero di epoche}: indica il numero di volte che la rete compie un passo di feed-forward e back-propagation (indipendentemente dal batch size)
+\item{batch size}: indica la quantità di esempi presi in considerazione per la fase di feed-forward
+\item{numero di neuroni per strato}: indica il numero di neuroni per singolo strato
+\item{funzione d'attivazione}: funzione che attiva o meno il singolo neurone in base alla formula $$\Sigma\left(weight * input\right) + bias$$
+\end{itemize}
 
 \section{Model selection}
 Come detto al paragrafo \ref{iperparametri}, per trovare il valore degli iperparametri bisogna basarsi su prove empiriche. In particolare in questo elaborato si sono fissati numero di epoche, batch size, numero di strati nascosti, learning rate e funzione d'attivazione mentre per il numero di neuroni per lo strato nascosto si è deciso di fare della model selection, in particolare usando una tecnica della \textbf{\textit{model selection}}: la \textbf{\textit{nested cross validation}}.
 
-\subsection{Nested cross validation}
+\subsection{Cross validation annidata}
 Una volta aver diviso il training set dal testing set, viene utilizzato esclusivamente  il primo per la cross-validation. In particolare questo viene partizionato in k sottoinsiemi (fold) di cui uno di questi prenderà il nome di validation set e gli altri di training set. La rete verrà quindi allenata sui training set e poi testata sul validation set; a questo punto si sceglierà una diversa permutazione di fold in cui il validation set sarà shiftato di una posizione, fino a che tutte saranno esaurite. 
 Es.: se il training set venisse suddviso in 3 fold le permutazioni prese in considerazione saranno:
 \begin{enumerate}
@@ -170,7 +169,7 @@ Quella spiegata è la procedura di cross-validation: tuttavia quella usata in qu
 \end{algorithmic}
 \end{algorithm}
 
-\chapter{Algoritmi di compressione}
+\chapter{Algoritmi di compressione per reti neurali}
 
 \section{Compressione di una rete}
 
@@ -214,25 +213,36 @@ L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans, che da do
 
 \chapter{Esperimenti}
 
-\section{Premessa}
+L'obiettivo di questo tirocinio è quello di verificare l'efficacia di tecniche di compressione su una rete neurale col compito di risolvere il problema del predecessore \ref{probPred}.
+Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo ...} con l’obiettivo di predire il valore di mercato del giocatore. Per questa fase sono state usate due tipi di reti: la prima sfruttando le API di Keras, la seconda è stata creata ad hoc per essere successivamente compressa.
 
-L’inizio di questo tirocinio è stato improntato sul trovare un’adeguata architettura per una rete neurale adatta a fare regressione. Si è deciso di usare un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo ...}. L’obiettivo della rete è quello di predire il valore di mercato del giocatore e per fare ciò si è deciso di considerare due alternative: la prima in cui vengono considerate tutte le features a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y} fosse maggiore di 0.55.
+Una volta conclusa questa parte si è affrontato il problema della compressione usando un dataset ...
 
-D'ora in poi si utlizzerà il termine feature per indicare una caratteristica che la rete usa durante per predire il risultato e target per indicare il valore da predire in base alle features in input.
+D'ora in poi si utlizzerà il termine feature per indicare una caratteristica che la rete usa durante la fase di training per predire il risultato e target per indicare il valore da predire in base alle features in input.
+
+\section{Dataset utilizzati}
+
+\subsection{Fifa 2019}
+
+Il primo dataset utilizzato è stato quello dei giocatori fifa, composto da 89 features e circa 18.2k esempi. 
+Una volta eliminate le features non necessarie all’esperimento (nome del giocatore, immagine del club, numero di maglia, ecc… ) si è proceduto a convertire tutti i valori numerici rappresentati come stringhe (come “Value”, “Release clause”, “Height”, ecc…) in float e a rimuovere dal dataset tutti gli esempi il cui “Value” risultasse superiore o uguale al valore minimo tra gli outlier trovati \footnote{SPIEGARE COME SONO STATI CALCOLATI GLI OUTLIER}. Inoltre i nomi delle squadre di appartenenza sono stati inclusi come features significative e codificati in interi.
+
+Terminata questa fase preliminare si è deciso di considerare diverse alternative: la prima in cui vengono considerate tutte le features a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y} fosse maggiore di 0.55.
+È stata considerata anche una terza opzione: selezionare la metà delle features tramite la Principal Component Analysis (PCA) scegliendo di mantenere la metà delle features. 
+
+\subsection{Problema del predecessore}\label{probPred}
+Data una lista di interi ordinata e un intero, predire l'indice del predecessore di quest'ultimo. In questa versione semplificata non si prendono in considerazione elementi diversi da quelli già presenti nella lista e si considera solamente il problema del posizionamento tralasciando quello di inserimento e cancellazione di un elemento.
+DESCRIVERE COMPOSIZIONE DATASET
 
 \section{Architettura della rete}
 La prima rete considerata è stata costruita sfruttando delle API di Keras (che a sua volta usa Tensorflow come backend). La rete è composta da uno strato di input con un numero di neuroni pari al numero di features considerate, uno strato hidden con N neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta precedentemente, quella della nested cross-validation.
 
-\section{Preparazione dataset}
-\subsection{Precomputazione}
-Il dataset utilizzato è composto da 89 colonne e circa 18.2k esempi. Una volta eliminate le features non necessarie all’esperimento (nome del giocatore, immagine del club, numero di maglia, ecc… ) si è proceduto a convertire tutti i valori numerici rappresentati come stringhe (come “Value”, “Release clause”, “Height”, ecc…) in float e a rimuovere dal dataset tutti gli esempi il cui “Value” risultasse superiore o uguale al valore minimo tra gli outlier trovati \footnote{SPIEGARE COME SONO STATI CALCOLATI GLI OUTLIER}. 
-
-\subsection{Selezione training / testing set}
+\subsection{Oragnizzazione dei dati}
 Una volta mescolati gli esempi randomicamente, sono stati estratti l'80\% degli esempi come training set e il restante 20\% per il testing set. Inoltre entrambi i set sono stati ulteriormente divisi in X\_train e X\_test (contenente solo le colonne di features) e y\_train e y\_test (contenente solo il target, cioè “Value”). Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler di sklearn che utilizza la seguente formula
 $$z = \frac{x - u}{s}$$ 
 dove u è la media del campione e s è la deviazione standard del campione.
 
-\subsection{Addrestramento rete}
+\subsection{Addrestramento}
 Per scegliere il giusto numero di neuroni per lo strato hidden si è proceduto con una cross-validation innestata. Di seguito vengono riportati gli iper-parametri scelti per la rete:
 \begin{itemize}
 \item{funzione d’attivazione}:
@@ -305,8 +315,23 @@ Fold & Accuracy & Neurons \\
 \end{center}
 
 \par\null\par
+\par\null\par
 
-È interessante osservare come, considerando solo le features con correlazione superiore a 0.55, si ottengono risultati meno accurati rispetto a considerare tutte le features. Questo può essere spiegato dal fatto che si possano nascondere tra due o più features delle relazioni importanti per determinare il valore di mercato del giocatore, ma che correlati singolarmente con il valore cercato diano un punteggio basso.
+I risultati migliori per singolo fold, considerando le features selezionate con PCA, sono
+
+\begin{center}
+\begin{tabular}{lcr}
+\toprule
+Fold & Accuracy & Neurons \\
+\midrule
+1  & 0.9933 & 180\\
+2  & 0.9924 & 200\\
+3  & 0.9922 & 180\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\par\null\par
 
 Osservato il risultato migliore in corrispondenza del numero massimo di neuroni si è deciso di inserire un ulteriore strato hidden riducendo l'intervallo di neuroni in fase di cross validation, da 10 a 40.
 Inoltre si è deciso di proseguire considerando tutte le features.
@@ -330,9 +355,28 @@ Fold & Accuracy & Neurons \\
 \par\null\par
 \par\null\par
 
+I risultati migliori per singolo fold, considerando le features selezionate tramite PCA, sono
+
+\par\null\par
+
+\begin{center}
+\begin{tabular}{lcr}
+\toprule
+Fold & Accuracy & Neurons \\
+\midrule
+1  & 0.9951 & 40, 40\\
+2  & 0.9947 & 40, 40\\
+3  & 0.995 & 40, 40\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\par\null\par
+\par\null\par
+
 \subsection{Rete ad hoc}
 Purtroppo la rete costruita usando le API di Keras non si presta alla manipolazione necessaria per la compressione, né per il pruning, non c’è modo per mantenere inattive le connessioni tagliate, né per il weight sharing, non c’è compatibilità con le nuove strutture dati necessarie alla tecnica stessa.
-Si è quindi proceduto alla costruzione di una rete simile che si prestasse alla compressione. Come per la rete precedente si sono usati gli stessi iper-parametri eccezion fatta per il numero di neuroni dello strato nascosto: per questi si è proceduto con una nested-cross-validation considerando un numero di neuroni compreso tra 10 e 100 ad intervalli di 10. 
+Si è quindi proceduto alla costruzione di una rete simile che si prestasse alla compressione. Come per la rete precedente si sono usati gli stessi iper-parametri eccezion fatta per il numero di neuroni dello strato nascosto: per questi si è proceduto con una nested-cross-validation considerando prima un numero di neuroni compreso tra 10 e 40 ad intervalli di 10 e poi tra 10 e 100 ad intervalli di 10.
 Di seguito sono riportati i risultati.
 
 \par\null\par
@@ -342,8 +386,22 @@ Di seguito sono riportati i risultati.
 \toprule
 Fold & Accuracy & Neurons \\
 \midrule
+1  & 0.9941 & 40, 40\\
+2  & 0.9938 & 40, 40\\
+3  & 0.993 & 40, 30\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\par\null\par
+
+\begin{center}
+\begin{tabular}{lcr}
+\toprule
+Fold & Accuracy & Neurons \\
+\midrule
 1  & 0.9939 & 100, 100\\
-2  & 0.9938 & 50, 70\\
+2  & 0.994 & 80, 90\\
 3  & 0.9934 & 90, 100\\
 \bottomrule
 \end{tabular}
