@@ -61,7 +61,7 @@ Come detto sopra, la rete è composta da strati; gli strati, a loro volta, sono 
 Le connessioni tra i neuroni di uno strato e quelli del successivo sono monodirezionali, configurazione che porta ad avere un grafo diretto e aciclico. Quindi il flusso di dati che scorre nella rete viaggia dallo strato di input a quello di output senza che ci siano loop, il che implica anche che non ci siano interazioni tra neuroni dello stesso strato.
 
 \subsection{Il calcolo tra strati}
-Nell'implementazione pratica (vedi sezione X) viene usata una matrice dei pesi per rappresentare le connessioni tra strati. 
+Nell'implementazione pratica viene usata una matrice dei pesi per rappresentare le connessioni tra strati. 
 Siano 
 \begin{itemize}
 \item{$W_{ih}$} la matrice dei pesi che rappresenta le connessioni tra strato input e hidden
@@ -181,11 +181,7 @@ Per ridurre questo impatto negativo si stanno studiando diversi metodi per compr
 L’idea di fondo del pruning è semplice; ogni collegamento tra neuroni ha associato un peso che ne determina l’importanza (avrà letteralmente un peso maggiore nell’influenzare il risultato finale della rete), da qui l’intuizione per cui, ignorando i collegamenti con peso tendente allo zero, non altero significativamente il risultato della rete che otterrei considerandoli. 
 Si sceglie quindi di eliminare questi neuroni alleggerendo così la matrice dei pesi da memorizzare; tuttavia questa operazione non è del tutto gratuita. A spese di una dimensione minore, ci si ritrova con nuove strutture dati con cui è più lenta l'operazione di moltiplicazione tra matrici. Come nuova struttura dati si può utilizzare una matrice
 \begin{itemize}
-\item{\textbf{\textit{Compressed Sparse Row}}}: vengono usati 3 vettori contenenti rispettivamente i valori non zero letti per riga,  e gli indici di colonna
-\begin{center}
-\large
-DA COMPLETARE
-\end{center}
+\item{\textbf{\textit{Compressed Sparse Row}}}: vengono usati 3 vettori contenenti rispettivamente i valori non zero letti per riga, un puntatore alle righe e gli indici di colonna
 \item{\textbf{\textit{Compressed Sparse Column}}}: simile alla precedente con la differenza che, nel primo vettore, i valori vengono letti per colonna, vengono memorizzati gli indici di riga per ogni valore, e i relativi puntatori alle colonne.
 \end{itemize}
 
