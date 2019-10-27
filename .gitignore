@@ -4,5 +4,7 @@
 Elaborato/*.pdf
 Elaborato/*.bak
 Elaborato/*.log
+Elaborato/*.toc
+Elaborato/*.aux
 
 CodicePalermo
