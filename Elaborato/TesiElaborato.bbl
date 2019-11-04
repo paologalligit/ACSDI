@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+
+\bibitem{McCulloch}
+Stuart~J. Russell and Peter Norvig.
+\newblock Artificial intelligence a modern approach, 2010.
+
+\bibitem{Perceptron}
+Frank Rosenblatt.
+\newblock Artificial intelligence a modern approach, 2010.
+
+\bibitem{Convolutional}
+Keiron O’Shea and Ryan Nash.
+\newblock An introduction to convolutional neural networks, 2015.
+
+\end{thebibliography}
