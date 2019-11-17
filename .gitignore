@@ -1,10 +1,16 @@
 **/.ipynb_checkpoints
 **/__pycache__
 
-Elaborato/*.pdf
 Elaborato/*.bak
 Elaborato/*.log
 Elaborato/*.toc
 Elaborato/*.aux
+Elaborato/*.bbl
+Elaborato/*.bcf
+Elaborato/*.blg
+Elaborato/*.dvi
+Elaborato/*.xml
+Elaborato/*.gz
+Elaborato/TesiElaborato.pdf
 
 CodicePalermo
