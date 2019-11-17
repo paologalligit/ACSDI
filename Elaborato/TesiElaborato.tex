@@ -38,7 +38,7 @@
 \linespread{1.4}\selectfont
 
 \chapter*{Introduzione}
-Negli ultimi anni, grazie anche ad un continuo miglioramento delle prestazioni computazionali delle macchine, è aumentato lo studio e l'utilizzo di algoritmi per l'apprendimento automatico (o machine learning). L'impiego che ne viene fatto è vasto; dalla sicurezza dei dati al trading finanziario, dal campo sanitario al processamento del linguaggio naturale. Con l'aumentare delle prestazioni di processori e le dimensioni della memoria di dispositivi mobili, questi algoritmi hanno cominciato ad essere eseguiti anche su dispositivi mobili e IoT; tutt'oggi infatti abbiamo negli smartphone dei programmi che, facendo uso dell'intelligenza artificiale, riescono ad esempio a classificare le immagini o a fare da assistente vocale interagendo con i comandi vocali dell'utente. 
+Negli ultimi anni è aumentato l'interesse per lo studio e per l'utilizzo di algoritmi per l'apprendimento automatico (machine learning). L'impiego che ne viene fatto è vasto; dalla sicurezza dei dati al trading finanziario, dal campo sanitario al processamento del linguaggio naturale. Con l'aumentare delle prestazioni dei processori e le dimensioni della memoria di dispositivi mobili, questi algoritmi hanno cominciato ad essere impiegati anche su dispositivi mobili e nell'IoT; tutt'oggi infatti abbiamo negli smartphone programmi che, facendo uso di un'intelligenza artificiale, riescono ad esempio a classificare immagini o a fare da assistente vocale interagendo tramite comandi vocali con l'utente. 
 In questo elaborato verrà preso in esame un particolare ramo del machine learning: le reti neurali artificiali per fare regressione. \\
 Nel primo capitolo verrà spiegato cosa sia effettivamente una rete neurale cominciando presentandone degli accenni storici, fino ad arrivare ad illustrarne l'architettura e come vengono usate. Come si vedrà in questo capitolo un grande problema delle reti neurali è la quantità di memoria che viene richiesta per memorizzarne le strutture dati occorrenti al loro funzionamento. A tal proposito vengono proposti due algoritmi di compressione, di cui si parlerà nel secondo capitolo, per rimediare a tale problema. L'interrogativo a cui questo elaborato si pone di rispondere è infatti quanto l'azione di compressione delle reti possa inficiare sulla loro accuratezza delle previsioni, ed in merito a ciò il terzo capitolo riporta gli esperimenti di compressione effettuati su una rete che predice l'indice di inserimento di un elemento all'interno di una lista ordinata (problema del predecessore).
 
@@ -254,7 +254,7 @@ Come strutture dati sono stati utilizzati un vettore per ogni strato in cui veng
 Per gli esperimenti trattati nell'elaborato, dopo aver fissato il numero di clusters per strato e dopo averne trovato i centroidi, le matrici dei pesi sono state sostituite con le matrici di indici che puntano al relativo centroide. 
 
 \subsection{Algoritmo K-Means}\label{kmeans}
-L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans, che da documentazione segue l’euristica di Lloyd, descritta di seguita.
+L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html}, che da documentazione segue l’euristica di Lloyd ~\cite{Lloyd}, descritta di seguita.
 
 \begin{enumerate}
 \item{Vengono scelti k centroidi casualmente, dove k è il numero di clusters che si vogliono creare}.
@@ -349,9 +349,8 @@ $\displaystyle{\frac{\sum_{i=1}^n \left(x_i - y_i\right)^2}{n}} \; \textit{dove 
 
 \begin{itemize}
 \item{learning rate}: 0.001;
-\item{beta\_1}: 0.9;
-\item{beta\_2}: 0.99;
-\item{decay}: 0.0;
+\item{beta \footnote{rappresenta il tasso esponenziale di decay per la stima del momenutm}}: 0.9;
+\item{decay \footnote{quantità che viene utilizzata per abbassare il valore del learning rate, soprattutto quando si parte da un valore elevato. Questo fa in modo che, più ci si avvicini al minimo globale della funzione di loss, più i passi fatti verso tale punto sono piccoli e precisi}}: 0.0;
 \end{itemize}
 
 \item{numero epoche}: 100;
@@ -633,6 +632,8 @@ Di seguito vengono spiegati i valori delle colonne.
 \newpage
 
 \subsection{Weight sharing rete ad hoc}
+In questo paragrafo verranno illustrati i risultati ottenuti comprimendo la rete utilizzata nel sottoparagrafo \ref{reteAdHoc} con la tecnica del weight sharing.
+Di seguito vengono spiegati i valori delle colonne.
 \begin{itemize}
 \item{$\eta$}: proporzione dello spazio originario occupato da quella compressa; il valore 0 indica la rete non compressa $$\eta=\left(\frac{n m \times f(k) + 32k}{32 \times n m}\right)$$ 
 \begin{multline}
@@ -657,9 +658,19 @@ $$;
 \item{mean error}: errore medio;
 \end{itemize}
 \par\null\par
+È interessante notare come per la rete a zero strati non siano riportati tassi di compressione inferiori al 30\% e per le singolo e doppio strato inferiori al 60\%. Questo è dovuto alla scelta di determinare il numero di cluster per strato usando la formula \eqref{etaSharing}.
+
+\begin{equation}
+\mathrm{cluster}=\left(\frac{c_p \times 32d - db}{32}\right)
+\label{etaSharing}
+\end{equation}
+\par\null\par
+dove $c_p \in [0,\dots,1]$ è il tasso di compressione che si vuole ottenere, $d$ è la dimensione della matrice dei pesi e b è la quantità di byte usata per rappresentare i puntatori ai centroidi.
+
+\par\null\par
+\par\null\par
 \par\null\par
 
-SPIEGARE PERCHÉ SI È COMINCIATO DA ETA 60 E NON 30, COME QUELLA CON 0 HIDDEN, O 10!
 
 \input{risultati_ws}
 
