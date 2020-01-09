@@ -3,7 +3,7 @@
 \usepackage[italian]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{algorithm}
+\usepackage[Algoritmo]{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage[pdftex]{graphics}
 \usepackage{graphicx}
@@ -28,6 +28,7 @@
 \usepackage[showframe=false]{geometry}
 \usepackage{changepage}
 \usepackage{pdfpages}
+\usepackage{float}
 
 \begin{document}
 
@@ -38,73 +39,83 @@
 \linespread{1.4}\selectfont
 
 \chapter*{Introduzione}
-Negli ultimi anni è aumentato l'interesse per lo studio e per l'utilizzo di algoritmi per l'apprendimento automatico (machine learning). L'impiego che ne viene fatto è vasto; dalla sicurezza dei dati al trading finanziario, dal campo sanitario al processamento del linguaggio naturale. Con l'aumentare delle prestazioni dei processori e le dimensioni della memoria di dispositivi mobili, questi algoritmi hanno cominciato ad essere impiegati anche su dispositivi mobili e nell'IoT; tutt'oggi infatti abbiamo negli smartphone programmi che, facendo uso di un'intelligenza artificiale, riescono ad esempio a classificare immagini o a fare da assistente vocale interagendo tramite comandi vocali con l'utente. 
-In questo elaborato verrà preso in esame un particolare ramo del machine learning: le reti neurali artificiali per fare regressione. \\
-Nel primo capitolo verrà spiegato cosa sia effettivamente una rete neurale cominciando presentandone degli accenni storici, fino ad arrivare ad illustrarne l'architettura e come vengono usate. Come si vedrà in questo capitolo un grande problema delle reti neurali è la quantità di memoria che viene richiesta per memorizzarne le strutture dati occorrenti al loro funzionamento. A tal proposito vengono proposti due algoritmi di compressione, di cui si parlerà nel secondo capitolo, per rimediare a tale problema. L'interrogativo a cui questo elaborato si pone di rispondere è infatti quanto l'azione di compressione delle reti possa inficiare sulla loro accuratezza delle previsioni, ed in merito a ciò il terzo capitolo riporta gli esperimenti di compressione effettuati su una rete che predice l'indice di inserimento di un elemento all'interno di una lista ordinata (problema del predecessore).
+Negli ultimi anni è aumentato l'interesse per lo studio e per l'utilizzo di algoritmi per l'apprendimento automatico (machine learning). Tali procedure hanno la perculiarità di apprendere informazioni direttamente dai dati, senza aver bisogno di modelli matematici o equazioni predeterminate, continuando a migliorare le prestazioni in maniera adattiva con l'aumentare degli esempi presi in considerazione. Infatti cambia l'approccio rispetto ai classici programmi: non è più il programmatore che attraverso il codice sorgente da le istruzioni da eseguire alla macchina ma la macchina stessa che, attraverso un insieme di dati, dataset, elaborato da algoritmi di machine learning, sviluppa una propria logica per svolgere il compito richiesto.
+L'impiego che ne viene fatto è vasto: dalla sicurezza dei dati al trading finanziario, dal campo sanitario all'elaborazione del linguaggio naturale. Con l'aumentare delle prestazioni dei processori e delle dimensioni della memoria di dispositivi mobili, questi algoritmi hanno cominciato a essere impiegati anche su dispositivi mobili e nell'IoT \footnote{Internet Of Things: termine che indica l'esistenza di una varietà di oggetti (things) che, attraverso la rete (internet) sono capaci di interagire tra di loro e collaborare con altri oggetti ancora per creare nuovi servizi/applicazioni per raggiungere obiettivi comuni ~\cite{IOT}}; oggi infatti negli smartphone ci sono programmi che, facendo uso di tecniche di machine learning, riescono ad esempio a classificare immagini o a fungere da assistente vocale interagendo tramite comandi vocali con l'utente. 
+In questo elaborato verrà preso in esame un particolare strumento usato nel machine learning, noto come reti neurali artificiali. Tale strumento sarà applicato al problema della regressione. \\
+Nel primo capitolo verrà spiegato cosa sia effettivamente una rete neurale cominciando da alcuni accenni storici, fino a illustrarne l'architettura e le modalità di utilizzo. Un grande problema delle reti neurali è la quantità di memoria che viene richiesta per memorizzare le strutture dati occorrenti al loro funzionamento. A tal proposito vengono proposti due algoritmi di compressione, di cui si parlerà nel secondo capitolo, per rimediare a tale problema. L'interrogativo a cui questo elaborato si pone di rispondere è infatti quanto l'azione di compressione delle reti possa inficiare sull'accuratezza delle loro previsioni, e in merito a ciò il terzo capitolo riporta gli esiti di alcuni esperimenti di compressione effettuati su una rete che predice l'indice di inserimento di un elemento all'interno di una lista ordinata (problema del predecessore).
+La parte conclusiva è dedicata all'analisi dei risultati ottenuti negli esperimenti proposti nel capitolo precedente.
+
 
 \chapter{Le reti neurali artificiali}
 
 \section{Definizione e origini storiche}
-L’intuizione di replicare l’attività neurale che avviene nel sistema nervoso centrale umano quando apprende risale agli inizi degli anni ‘40, quando venne teorizzato un primo modello di neurone da McCulloch e Pitts (1943) ~\cite{McCulloch}. Il parallelo è molto stretto: così come il compito di un neurone è quello di ricevere, elaborare e ritrasmettere impulsi elettrici all’interno del sistema nervoso cerebrale, quello di un neurone artificiale è ricevere un certo dato in input e attivarsi o meno a seguito della sua elaborazione.
-È interessante notare che, a differenza di un classico software, la costruzione di un neurone artificiale non richiede la scrittura di un programma ma avviene a seguito di un processo assimilabile a quello di apprendimento ~\cite{Perceptron}. Inoltre, continuando l'analogia con il sistema nervoso centrale, non ci si è limitati ad usare un singolo neurone ma più neuroni e più strati di neuroni collegati tra loro: questo ha portato allo sviluppo delle reti neurali.
+L’intuizione di replicare l’attività neurale che avviene nel sistema nervoso centrale umano quando apprende, risale agli inizi degli anni ‘40, quando venne teorizzato un primo modello di neurone da McCulloch e Pitts ~\cite{McCulloch}. Il parallelo è molto stretto: così come il compito di un neurone è quello di ricevere, elaborare e ritrasmettere impulsi elettrici all’interno del sistema nervoso centrale, quello di un neurone artificiale è ricevere un certo dato in input e attivarsi o meno a seguito della sua elaborazione.
+È interessante notare che, a differenza di un classico software, la costruzione di un neurone artificiale non richiede la scrittura di un programma ma avviene a seguito di un processo assimilabile a quello dell'apprendimento ~\cite{Rosenblatt}. Inoltre, continuando l'analogia con il sistema nervoso centrale, non ci si è limitati a usare un singolo neurone ma più neuroni e più strati di neuroni collegati tra loro: questo ha portato allo sviluppo delle reti neurali.
+
 
 \section{Il neurone artificiale}
-Il neurone artificiale, vedi Figura 1.1, è composto da:
+La Figura \ref{neuronImage} illustra il classico modello del neurone artificiale, che è composto da:
 \begin{itemize}
-\item{input}: rappresentati da $x_1$, $x_2$, $\dots$, $x_n$, sono l'input che riceve il neurone
-\item{pesi}: rappresentati da $w_1$, $w_2$, $\dots$, $w_n$, sono i pesi associati alle singole connessioni tra input e neurone
-\item{$\Sigma$}: viene eseguito $\displaystyle{\sum_{i=1}^n x_i \times w_i}$
-\item{funzione d'attivazione}: la sommatoria al passo precedente viene usato come argomento per la funzione d'attivazione
-\item{output}: il risultato dei passaggi precedenti viene propagato in output stabilendo l'attivazione o meno del neurone
+\item{uno o più input $x_1$, $x_2$, $\dots$, $x_n$};
+\item{uno o più pesi $w_1$, $w_2$, $\dots$, $w_n$};
+\item{funzione d'attivazione};
+\item{output}.
 \end{itemize}
 
-\begin{figure}
+In particolare un neurone può essere attivato in base alla propria funzione d'attivazione: questa può essere una funzione binaria, come nel caso di quella a scalini \footnote{$\mathrm{step}(x) =
+\bigg \{
+\begin{array}{rl}
+0 & x < 0 \\
+1 & x \geq 0 \\
+\end{array}
+$} che attiva o disattiva il neurone, o generare un certo grado d'attivazione, come nella funzione sigmoide \footnote{$\displaystyle \mathrm{sigmoid}(x) = \frac{1}{1 + e^{-x}}$} o ReLu, che verrà spiegata nel Paragrafo \ref{relu}
+
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.75]{neurone_artificiale.png}
 \caption{Immagine di un neurone artificiale}
+\label{neuronImage}
 \end{center}
 \end{figure}
 
-\section{Architettura di una rete neurale}
-Come detto precedentemente, una volta costruito un neurone artificiale, il passo successivo è stato quello di usare più neuroni in modo da formarne degli strati e connettere più strati tra di loro.
-Una rete, per essere definita tale, deve essere composta da almeno 3 strati, vedi Figura 1.2:
+\section{Architettura di una rete neurale} \label{architettura}
+Come detto precedentemente, una volta costruito un neurone artificiale, il passo successivo è stato quello di usare più neuroni in modo da formarne degli strati e connettere più strati tra di loro. L'organizzazione di tale struttura può essere fatta in modi diversi, come ad esempio il perceptron \footnote{più input vengono passati al neurone che ne fa la somma pesata per i pesi delle connessioni, applica la funzione d'attivazione e passa il risultato all'output ~\cite{Perceptron} ~\cite{Perceptron2}} o le reti di Hopfield \footnote{in questa architettura ogni neurone svolge un ruolo di input in fase pre-training, di neurone nascosto in fase di training e neurone di output quando viene interrogato}; l'elaborato si concentrerà sull'organizzazione multistrato.
+Una rete, per essere in grado di apprendere teoricamente qualsiasi funzione, deve essere composta da almeno tre strati, illustrati in Figura \ref{ReteNeuraleDensamenteConnessa}, che prendono il nome di:
 \begin{enumerate}
-\item{input}
-\item{hidden}
-\item{output}
+\item{input};
+\item{hidden};
+\item{output}.
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[H]
 \includegraphics[scale=0.5]{nn_arch.png}
 \caption{Architettura rete neurale}
+\label{ReteNeuraleDensamenteConnessa}
 \end{figure}
 
-Il ruolo dello strato di input è quello di ricevere le feature da elaborare, lo strato nascosto si occuperà di rendere il modello più espressivo a livello di risoluzione di problemi di apprendimento rispetto ad uno con un solo neurone. Infine lo strato di output dovrà predire il risultato in base all’input ricevuto.
+Il ruolo dello strato di input è quello di ricevere le feature da elaborare, lo strato nascosto si occuperà di costruire una rappresentazione intermedia delle feature, che verrà poi elaborata dallo strato di output per fornire il risultato.
 
-Inoltre, in base a come i neuroni dei vari strati sono collegati tra loro si possono distinguere due configurazioni di rete come quella densamente connessa (fully connected) o convoluzionale (convolutional) usate principalmente per il riconoscimento di pattern in immagini: a differenza di quelle densamente connesse, i neuroni di uno strato sono collegati solo ad una piccola parte dello strato precedente ~\cite{Convolutional}
+Inoltre, in base a come i neuroni dei vari strati sono collegati tra loro, si possono distinguere diverse configurazioni di rete come quella densamente connessa (fully connected), convoluzionale (convolutional) \footnote{a differenza di quelle densamente connesse, i neuroni di uno strato sono collegati solo a una piccola parte dello strato precedente ~\cite{Convolutional}} usata principalmente per il riconoscimento di pattern in immagini o ancora quella ricorrente \footnote{la particolarità è che l'architettura prevede che siano presenti delle connessioni tra neuroni di uno strato e quello precedente, perdendo così la caratteristica di grafo aciclico; è usata quando è importante l'ordine dei dati, ad esempio nel riconoscimento del parlato o per riconoscere sequenze di stringhe o frame di un video ~\cite{Recurrent}} .
+In questo elaborato ci si concentrerà sulla tipologia densamente connessa, in cui ogni neurone di uno strato sarà collegato a ogni neurone del successivo, come mostrato in Figura \ref{ReteNeuraleDensamenteConnessa}.
 
-In questo elaborato ci si concentrerà sulla tipologia densamente connessa, in cui ogni neurone di uno strato sarà collegato ad ogni neurone del successivo.
-
-\subsection{Componenti}
-Come detto sopra, la rete è composta da strati; gli strati, a loro volta, sono un insieme di neuroni, ognuno dei quali ha associato un peso ($w$) per ogni collegamento in entrata e un bias ($b$). Questi sono stati impostati randomicamente, in un intervallo tra 0 e 1. Questi due sono gli unici parametri che, una volta inizializzati, vengono modificati automaticamente dalla rete durante il training. I restanti parametri, come il numero di neuroni in uno strato hidden o il numero di strati, rimangono tali durante tutte le fasi di addestramento del modello; inoltre l'approccio tipicamente usato per individuare tali parametri è quello empirico: questi prendono il nome di \textit{iperparametri}.
-
+Come detto sopra, la rete è composta da strati; gli strati, a loro volta, sono un insieme di neuroni, ognuno dei quali ha associato un peso ($w$) per ogni collegamento in entrata e un bias ($b$). Questi devono essere prima inizializzati ~\cite{ParametersInitialization}; esistono diversi modi di farlo (ad esempio estraendo valori da una distribuzione uniforme o gaussiana), negli esperimenti condotti sono stati inizializzati casualmente, seguendo una distribuzione uniforme in $[0, 1)$. Questi due sono gli unici parametri che, una volta inizializzati, vengono modificati automaticamente dalla rete durante il training. I restanti parametri, come il numero di neuroni in uno strato hidden o il numero di strati, rimangono tali durante tutte le fasi di addestramento del modello; inoltre l'approccio tipicamente usato per individuare tali parametri è quello empirico: questi prendono il nome di \textit{iperparametri}, di cui si parlerà nel Paragrafo \ref{iperparametri}.
 
 \section{Applicazioni}
-Le reti neurali vengono impiegate nell’attività di previsione (regressione) o classificazione.
+Le reti neurali vengono impiegate principalmente nell’attività di previsione (regressione) o classificazione.
 Nel primo caso rientrano, ad esempio, le previsioni di vendita: riuscire a prevedere il prezzo di un immobile in base a fattori che lo descrivono (i metri quadrati, il numero di stanze, la posizione centrale o meno in un centro abitato, ecc…) o prevedere l’andamento di un titolo azionario in borsa.
 Altro problema è quello invece della classificazione: si richiede in questo caso che la rete, dato un oggetto, ne restituisca la classe di appartenenza; tipico esempio è quello della classificazione di numeri scritti a mano o, date una serie di immagini, riconoscere quelle in cui è presente un particolare soggetto.
 In questo elaborato si andrà ad affrontare il problema legato alla regressione.
 
 \section{Esecuzione di una rete feed-forward}
-Le connessioni tra i neuroni di uno strato e quelli del successivo sono monodirezionali, configurazione che porta ad avere un grafo diretto e aciclico. Quindi il flusso di dati che scorre nella rete viaggia dallo strato di input a quello di output senza che ci siano loop, il che implica anche che non ci siano interazioni tra neuroni dello stesso strato e che il tempo necessario per far scorrere i dati da input a output è costante.
+Le connessioni tra i neuroni di uno strato e quelli del successivo sono monodirezionali, configurazione che porta ad avere un grafo diretto e aciclico. Quindi il flusso di dati che scorre nella rete viaggia dallo strato di input a quello di output senza che ci siano cicli, il che implica anche che non ci siano interazioni tra neuroni dello stesso strato e che il tempo necessario per far scorrere i dati da input a output sia costante, dato che i vari neuroni elaborano parallelamente i segnali che ricevono.
 
 \subsection{Il calcolo tra strati}\label{feedforward}
-Nell'implementazione pratica vengono usate delle matrici dei pesi per rappresentare le connessioni tra strati e dei vettori per rappresentare i valori di bias dei pesi . 
-Siano 
+Nell'implementazione pratica i pesi delle connessioni vengono rappresentati da matrici  e i pesi dei bias da vettori. 
+Siano:
 \begin{itemize}
-\item{$W_{ih}$} la matrice dei pesi di dimensione $r \times c$, dove r è il numero di neuroni in input e c il numero di neuroni dello strato hidden; ogni componente di questa matrice rappresenta il peso di una connessione tra un neurone dello strato input e uno dello strato hidden;
-\item{$W_{ho}$} analogamente al punto precedente, la matrice dei pesi che rappresenta le connessioni tra strato hidden e output;
-\item{$b_h$} il vettore colonna dei bias dello strato hidden di dimensione $r \times 1$ dove r è il numero di neuroni dello strato hidden; ogni componente rappresenta il bias di uno dei neuroni dello strato hidden;
+\item{$W_{ih}$} la matrice dei pesi di dimensione $r \times c$, dove $r$ è il numero di neuroni in input e $c$ il numero di neuroni dello strato hidden; ogni componente di questa matrice rappresenta il peso di una connessione tra un neurone dello strato input e uno dello strato hidden;
+\item{$W_{ho}$} analogamente al punto precedente, la matrice dei pesi che rappresenta le connessioni tra gli strati nascosto e di output;
+\item{$b_h$} il vettore colonna dei bias dello strato hidden di dimensione $r \times 1$ dove $r$ è il numero di neuroni dello strato hidden; ogni componente rappresenta il bias di uno dei neuroni dello strato hidden;
 \item{$b_o$} analogamente al punto precedente, il vettore dei bias dello strato di output;
 \item{$x$} il vettore di input;
 \item{$f$} la funzione d'attivazione scelta per lo strato.
@@ -113,24 +124,19 @@ Per eseguire l'algoritmo di feed-forward occorre calcolare
 $$\alpha = f\left(x \cdot W_{ih} + b_h\right),$$
 procedendo poi analogamente con lo strato successivo
 $$\mathrm{prediction} = f\left(\alpha \cdot W_{ho} + b_o\right).$$
+Da notare che, in entrambi i casi sopra, la funzione d'attivazione viene applicata a ogni componente del vettore. Inoltre, per semplicità, nell'esempio è stata usata la stessa $f$ per ogni strato; nulla vietà però di applicare una diversa funzione d'attivazione per strato.
 Le reti considerate in questo lavoro vengono utilizzate per calcolare una regressione, e dunque hanno un solo neurone di output: prediction sarà quindi un valore scalare che rappresenterà la previsione della rete in base all'input ricevuto.
 
 \section{Addestramento di una rete neurale}
-Per continuare il parallelo con il sistema nervoso centrale umano, così come per l'attività di apprendimento occorre studiare, anche una rete neurale artificiale ha bisogno di ''studiare``: questa fase viene detta fase di addestramento (training).
-Una volta selezionato il dataset contenente i caratteri che la rete dovrà apprendere, si procede a dividere tale insieme in due sottoinsiemi:
-
-\begin{itemize}
-\item{training set};
-\item{testing set}.
-\end{itemize}
-
-Il primo verrà usato per l'attività di apprendimento, il secondo per valutare la bontà della rete su esempi che non ha ancora visto. Per selezionare la quantità di dati tra i due insiemi è stato utilizzato un holdout di 80\% - 20\%; una soluzione alternativa sarebbe stata quella di fare una cross-validation.
+Per continuare il parallelo con il sistema nervoso centrale umano, così come per l'attività di apprendimento occorre studiare, anche una rete neurale artificiale ha bisogno di ``studiare'': questa fase viene detta fase di addestramento (training).
+Una volta selezionato il dataset contenente un certo numero di esempi \footnote{un esempio è rappresentato da un insieme di feature e un target}, si procede a dividere tale insieme in due sottoinsiemi: per fare questo, negli esperimenti che verranno presentati più avanti, si è utilizzato un holdout di 80\% - 20\% rispettivamente per training set, che verrà usato per l'attività di apprendimento, e per il testing set, per valutare la bontà della rete su esempi che non ha ancora visto.
+Una soluzione alternativa sarebbe stata quella di fare una cross-validation, concetto spiegato nel Paragrafo \ref{crossvalidation}.
 
 \subsection{Fase di training}
-In questa fase le feature degli esempi nel training set vengono copiate nello strato di input della rete. Utilizzando la procedura descritta nel Paragrafo \ref{feedforward} la rete propaga il risultato fino al neurone di output. È in questo momento che la rete impara confrontando la previsione con l’effettivo target: in base alla loro differenza, la rete stessa correggerà i pesi degli strati usando un algoritmo noto come back-propagation (spiegato nel Paragrafo \ref{backprop}).
-Questa operazione viene eseguita un numero n di volte, numero che prende il nome di epoca. Questo parametro indica che la rete ha visto tutti gli esempi del training set. Il concetto di epoca è strettamente legato a quello di batch size, iperparametro che specifica dopo ogni quanti esempi i pesi della rete verranno aggiornati.
-Esempio: se avessi 200 esempi nel training set, batch size pari a 10 e 100 epoche significherebbe che in un epoca avverranno 20 aggiornamenti ($200 \div 10$) e al termine delle epoche 2000 aggiornamenti ($20 \times 100$).
-Una volta che la rete ha iterato per un numero pari al numero di epoche scelto termina la fase di training.
+In questa fase le feature degli esempi nel training set vengono copiate nello strato di input della rete. Utilizzando la procedura descritta nel Paragrafo \ref{feedforward}, la rete propaga il risultato fino al neurone di output. È in questo momento che la rete impara confrontando la previsione con l’effettivo target: in base alla loro differenza, la rete stessa correggerà i pesi degli strati usando un algoritmo noto come back-propagation (spiegato nel Paragrafo \ref{backprop}), con l'obiettivo di minimizzare localmente una funzione di perdita \label{loss} (loss function) \footnote{in questo caso è la funzione legata all'errore di predizione fatto dalla rete sui dati del training set.}.
+L'operazione di aggiornamento dei pesi viene in realtà eseguita solo dopo che un certo numero di esempi è stato mostrato alla rete, definito dal parametro batch size; normalmente è necessario effettuare vari cicli di aggiornamento che richiedono di mostrare gli esempi del training set più volte, questo concetto prende il nome di epoca, che indica quante volte la rete ha visto ogni esempio.
+Esempio: se avessi 200 esempi nel training set e un batch size pari a 10, ciò significherebbe che l'aggiornamento dei pesi avverrebbe ogni volta che sono stati presentati alla rete 10 esempi, e
+quindi un'epoca corrisponderebbe a $200 \div 10 = 20$ aggiornamenti. Ipotizzando che l'intero processo di addestramento richieda cento epoche, si ottiene quindi che l'aggiornamento dei pesi è stato effettuato $20 \times 100 = 2000$ volte.
 
 Inoltre esistono diversi criteri per stabilire quando terminare l'apprendimento; in particolare negli esperimenti condotti in questo elaborato ne sono stati usati due basati su:
 \begin{itemize}
@@ -139,74 +145,87 @@ Inoltre esistono diversi criteri per stabilire quando terminare l'apprendimento;
 \end{itemize}
 
 \subsection{Fase di testing}
-Terminata la fase di training occorre verificare il comportamente della rete su dati nuovi rispetto a quelli usati per addestrarla. Questo permette di capire la reale capacità di previsione della rete e di valutare se durante l'addestramento si sia verificato uno dei problemi descritti di seguito.
+Terminata la fase di training occorre verificare il comportamento della rete su dati nuovi rispetto a quelli usati per addestrarla. Questo permette di valutare la reale capacità di previsione della rete e di valutare se durante l'addestramento si sia verificato uno dei problemi descritti di seguito.
 \begin{itemize}
-\item{Si parla di \textit{overfitting} quando il modello si adatta così tanto agli esempi del training set da perdere la capacità di generalizzare su nuovi esempi. Sintomo dell'overfitting è un'alta accuratezza durante la fase di training e una scarsa accuratezza in fase di testing; la rete ha imparato ''a memoria`` i casi di training in modo tale da non riconoscerne di nuovi};
-\item{L'\textit{underfitting} è l'opposto del caso precedente. Si verifica quando il modello non riesce ad imparare la relazione tra feature e target, risultando in previsioni poco accurate}.
+\item{si parla di \textit{overfitting} quando il modello si adatta così tanto agli esempi del training set da perdere la capacità di generalizzare su nuovi esempi. Sintomo dell'overfitting è un'alta accuratezza durante la fase di training e una scarsa accuratezza in fase di testing; la rete ha imparato ``a memoria'' i casi di training in modo tale da non riconoscerne di nuovi};
+\item{l'\textit{underfitting} è l'opposto del caso precedente. Si verifica quando il modello non riesce a imparare la relazione tra feature e target, risultando in previsioni poco accurate}.
 \end{itemize}
 
 \section{Algoritmo di back-propagation}\label{backprop}
-Una volta che l’informazione ha raggiunto lo strato di output ho la previsione; tuttavia questa conterrà dell’errore. Per ridurlo si usa un apposito algoritmo di propagazione all’indietro che regola i pesi associati ai collegamenti tra singoli neuroni, partendo dallo strato più esterno a quello più interno ~\cite{Backpropagation}. Quello che permette di fare è legare l'errore ottenuto in output a un algoritmo di ottimizzazione locale di una funzione di errore, in questo caso l'errore quadratico medio. Di seguito la formula per il calcolo dell'aggiornamento del peso.
-$$W^n_x = W_x - \eta \left(\frac{\partial \mathrm{Error}}{\partial W_x}\right)$$ dove $W^n_x$ è il valore del nuovo peso, $W_x$ il vecchio peso, $\eta$ il learning rate e tra parentesi $\frac{\partial \mathrm{Error}}{\partial W_x}$ la derivata parziale dell'errore rispetto ai pesi e $\mathrm{Error}$ indica la funzione che associa a pesi e bias della rete l'errore corrispondente; la sua minimizzazione viene fatta usando l'algoritmo del gradiente discendente che consiste nel modificare i parametri della rete sottraendo loro una funzione del gradiente.
+L'apprendimento consiste nel determinare i pesi delle connessioni e i bias che permettono alla rete di fare predizioni accurate sul training set. In altre parole bisogna minimizzare l'errore quadratico medio di predizione, che è la loss function citata nel Paragrafo \ref{loss}.
+Il numero di argomenti della funzione da ottimizzare è molto elevato, e inoltre questa funzione è non-lineare, quindi non si possono utilizzare le tecniche classiche di ottimizzazione. La soluzione a questo problema consiste nell'utilizzare una tecnica locale e iterativa, nota come back-propagation ~\cite{Backpropagation}, che regola i pesi associati ai collegamenti. Quello che permette di fare è legare l'errore ottenuto in output a un algoritmo di ottimizzazione locale di una funzione di errore, in questo caso l'errore quadratico medio. Di seguito la formula per il calcolo dell'aggiornamento del peso.
+$$W^n_x = W_x - \eta \left(\frac{\partial \mathrm{Error}}{\partial W_x}\right)$$ dove $W^n_x$ è il valore del nuovo peso, $W_x$ il vecchio peso, $\eta$ il learning rate \footnote{è un valore che solitamente è compreso tra 0 e 1, è il grado con cui la rete adatta i propri pesi, più è alto il learning rate e più impatto avrà l'errore propagato e viceversa} e tra parentesi $\frac{\partial \mathrm{Error}}{\partial W_x}$ la derivata parziale dell'errore rispetto ai pesi e $\mathrm{Error}$ indica la funzione che associa a pesi e bias della rete l'errore corrispondente; la sua minimizzazione viene fatta usando l'algoritmo del gradiente discendente che consiste nel modificare i parametri della rete sottraendo loro una frazione del gradiente.
 
 Una volta fatto questo calcolo con la matrice dei pesi strato hidden/output, si fa la stessa cosa per quella input/hidden.
 
+Un problema legato a questo algoritmo è che, non conoscendo a priori la funzione di loss da minimizzare, è possibile rimanere bloccati in un punto di minimo locale. Questo succede quando la funzione presenta un punto di minimo locale in un intorno \footnote{sia $\epsilon \in \mathbb{R}$ un intorno centrato in un punto $x_0$ è un intervallo compreso in $(x_0 - \epsilon, x_0 + \epsilon)$} sufficientemente grande da impedire ai passi compiuti nella discesa del gradiente di spostarsi da quel punto. Non sempre però è un grave problema, può accadere ad esempio che il valore che minimizza un punto di minimo locale si comporta bene quasi come quello che minimizza il minimo globale come in Figura \ref{localMinima}. Per evitare di rimanere bloccati su un minimo locale si possono provare diverse soluzioni come aumentare il valore del learning rate, incrementare il numero di strati nascosti o ancora provare diverse funzioni d'attivazione o algoritmi di ottimizzazione per la discesa del gradiente ~\cite{LocalMinima}.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.5]{localMinima.png}
+\caption{Diversi punti di minimo in una funzione}
+\label{localMinima}
+\end{center}
+\end{figure}
+
 \subsection{Iperparametri}\label{iperparametri}
-Gli iperparametri sono tutti quelli il cui valore viene impostato prima che l'addestramento abbia inizio e che non cambiano nel corso dello stesso. Negli esperimenti presentati in questo elaborato questi valori vengono cercati empiricamente attraverso model selection (vedi \ref{modelselection})
+Gli iperparametri, di cui si è già accennato nel Paragrafo \ref{architettura}, sono tutti quelli il cui valore viene impostato prima che l'addestramento abbia inizio e che non cambiano nel corso dello stesso. Negli esperimenti presentati in questo elaborato questi valori vengono selezionati empiricamente attraverso model selection (vedi Paragrafo \ref{modelselection})
 In questa categoria rientrano:
 \begin{itemize}
 \item{learning rate}: indica il grado con cui la rete modifica i propri pesi durante la fase di back-propagation;
 \item{numero di epoche}: indica il numero di volte che la rete ha visto tutti gli esempi del training set;
 \item{batch size}: indica dopo quanti esempi mostrati alla rete si aggiornano i pesi;
-\item{numero di neuroni per strato per strato nascosto}: indica il numero di neuroni per singolo strato;
+\item{numero di neuroni per strato per strato nascosto \footnote{in questo elaborato verranno usate reti neurali con zero, uno e due strati nascosti: per casi più complessi si può arrivare ad un numero maggiore di strati nascosti}}: indica il numero di neuroni per singolo strato;
 \item{funzione d'attivazione}: funzione che determina l'intensità d'attivazione del singolo neurone.
 \end{itemize}
 
-Ogni volta che in questo elaborato verranno introdotti nuovi esperimenti ne verranno anche indicati gli iperparametri coinvolti.
+Ogni volta che in questo elaborato verranno introdotti nuovi esperimenti ne verranno anche indicati gli iperparametri relativi.
 
 \section{Model selection}\label{modelselection}
-Come indicato nel paragrafo \ref{iperparametri}, per trovare il valore degli iperparametri bisogna basarsi su prove empiriche. In particolare, negli esperimenti condotti sono stati fissati a priori i valori per numero di epoche, batch size, numero di strati nascosti, learning rate e funzione d'attivazione. Il numero di neuroni dello strato nascosto è stato dimensionato usando una tecnica di model selection che prende il nome di cross-validation e che è spiegata nel prossimo paragrafo.
+Come indicato nel Paragrafo \ref{iperparametri}, per trovare il valore degli iperparametri bisogna basarsi su prove empiriche. In particolare, negli esperimenti condotti sono stati fissati a priori i valori per numero di epoche, batch size, numero di strati nascosti, learning rate e funzione d'attivazione. Il numero di neuroni dello strato nascosto è stato dimensionato usando una tecnica di model selection che prende il nome di cross-validation che verrà spiegata nel prossimo paragrafo.
 
 \subsection{Cross validation}\label{crossvalidation}
-Dopo aver diviso il training set dal testing set, viene utilizzato esclusivamente  il primo per la cross-validation. In particolare questo viene partizionato in $k$ sottoinsiemi (fold) di cui uno di questi prenderà il nome di validation set e gli altri di training set. Per ogni valore possibile dell'iperparametro (o per ogni possibile configurazione se ci sono più iperparametri) vengono ripetuti $k$ processi di addestramento, ogni volta eliminando dal training set uno dei fold e utilizzando quet'ultimo per calcolare l'errore; si ottengono così $k$ errori di cui si calcola la media.
+Dopo aver diviso il training set dal testing set, viene utilizzato esclusivamente  il primo per la cross-validation. In particolare questo viene partizionato in $k$ sottoinsiemi (fold \footnote{l'idea è quella di suddividere gli $m$ esempi in $k$ gruppi di grandezza approssimativamente uguale, per semplicità si è deciso di mettere i primi $\frac{m}{k}$ elementi del training set nel primo fold e così via}) di cui uno di questi prenderà il nome di validation set e gli altri di training set. Per ogni valore possibile dell'iperparametro (o per ogni possibile configurazione se ci sono più iperparametri) vengono ripetuti $k$ processi di addestramento, ogni volta eliminando dal training set uno dei fold e utilizzando quet'ultimo per calcolare l'errore; si ottengono così $k$ errori di cui si calcola la media.
 
-Es.: se il training set venisse suddviso in 3 fold le permutazioni prese in considerazione saranno:
-\begin{enumerate}
-\item{TRAINING | TRAINING | VALIDATION}
-\item{TRAINING | VALIDATION | TRAINING}
-\item{VALIDATION | TRAINING | TRAINING}
-\end{enumerate}
+Se per esempio il training set venisse suddviso in tre fold, le permutazioni prese in considerazione saranno quelle descritte nella Figura \ref{foldDiagram}
 
-Viene infine scelto il valore che corrisponde all'errore medio minore, e si riaddestra una rete dopo aver fissato a quel valore l'iperparametro.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.45]{foldDiagram.png}
+\caption{Divisione di un dataset in 3 fold}
+\label{foldDiagram}
+\end{center}
+\end{figure}
+
+Viene infine scelto il valore dell'iperparametro (o degli iperparametri) che corrisponde all'errore medio minore, per poi riaddestrare la rete e valutare la bontà di generalizzazione di quest'ultima utilizzando il test set.
 
 \makeatletter
 \def\BState{\State\hskip-\ALG@thistlm}
 \makeatother
-
 \begin{algorithm}
 \caption{Cross Validation}
 \begin{algorithmic}[1]
-\Procedure{CrossValidation}{}
 \BState \emph{input}:
-\State $H \gets \textit{insieme di iperparametri presi in considerazione}$
+\State $H \gets \textit{insieme dei valori di un iperparametro \footnote{se ne potrebbero considerare più di uno di iperparametri, per semplicità qua se ne considera solo uno}}$
 \State $S \gets \textit{training set}$
 \State $K \gets \textit{numero di fold}$
-\BState \emph{procedure}:
-\State $S_{perm} \gets \textit{K permutazioni di S}$
-\State $L_M \gets [\infty] \;\forall\; h \;\in\; H$\\
-
-\For {$k \in \{1,\dots,K\}$}
-\State $s_{k} \gets \textit{k-esima permutazione di S}$
+\BState \emph{procedura}:
+\State $S_{perm} \gets \textit{fold di S}$
+\State $L[h] \gets 0 \;\forall\; h \;\in\; H$\\
 
 \For {$h \in H$}
-\State $\textit{alleno la rete sul training set di } s_{k}$
-\State $\textit{valuto la rete sul validation set di } s_{k}$
-\State $L_{hk} \gets \textit{valore di loss per il k-esimo fold per h-esimo iperparametro}$
-\State $L_M[h] \gets min(L_{hk}, \;L_M[h])$
+
+\For {$k \in \{1,\dots,K\}$}
+\State $s_{k} \gets \textit{k-esimo fold di S}$
+
+\State $\textit{alleno la rete su } S \setminus s_{k}$
+\State $\textit{valuto la rete su } s_{k}$
+\State $L[h] \gets L[h] + \textit{valore di loss per il k-esimo fold per h-esimo iperparametro}$
 \EndFor
+\State $L[h] \gets L[h] \div K$
 \EndFor
-\State $\textit{Per ogni iperparametro ho il carattere migliore dei k fold}$
-\EndProcedure
+\State $h_{best} \gets min(L[h]\, \forall\, h \in H )$
+\State $\textit{return}\, h_{best}$
 \end{algorithmic}
 \end{algorithm}
 
@@ -214,15 +233,16 @@ Viene infine scelto il valore che corrisponde all'errore medio minore, e si riad
 
 \section{Compressione di una rete}
 
-Uno degli svantaggi più evidenti delle reti neurali è lo spazio che queste occupano in memoria e i tempi elevati per il loro l’addestramento. Questo aspetto ha assunto un ruolo sempre più importante con il diffondersi di macchine con ridotte capacità di computazione e di memoria e in generale dell’IoT. 
-Per ridurre questo impatto negativo si stanno studiando diversi metodi per comprimere le strutture dati alla base di una rete neurale in modo da ridurne le dimensioni in memoria lasciando il più possibile invariata l’accuratezza. Questo elaborato si prefigge di verificare l'efficacia di due tecniche di compressione note come ''pruning`` e ''weight sharing`` su una rete neurale feed-forward utilizzata per problemi di regressione.
+Uno degli svantaggi più evidenti delle reti neurali è lo spazio che queste occupano in memoria e i tempi elevati per il loro addestramento. Questo aspetto ha assunto un ruolo sempre più importante con il diffondersi di macchine con ridotte capacità di computazione e di memoria e in generale dell’IoT. 
+Per ridurre questo impatto negativo si stanno studiando diverse soluzioni tra cui comprimere le strutture dati alla base di una rete neurale in modo da ridurne le dimensioni in memoria senza intaccarne l’accuratezza. Questo elaborato si prefigge di verificare l'efficacia di due tecniche di compressione note come ``pruning'' e ``weight sharing'' su una rete neurale feed-forward utilizzata per problemi di regressione.
 
-\section{Pruning}
+\section{Pruning}\label{pruning}
 
-L’idea di fondo del pruning è semplice: ogni collegamento tra neuroni ha associato un peso che ne determina l’importanza (avrà letteralmente un peso maggiore nell’influenzare il risultato finale della rete quando il valore della connessione è molto alto o molto basso), da qui l’intuizione per cui, ignorando i collegamenti con peso tendente allo zero, non altero significativamente il risultato della rete che otterrei considerandoli ~\cite{Pruning}.
-Si sceglie quindi di annullare queste connessioni rendendo così sparsa la matrice dei pesi da memorizzare. Tuttavia questa operazione non è del tutto gratuita: ci si ritrova con nuove strutture dati per le quali è più lenta l'operazione di moltiplicazione tra matrici. Due scelte possibili per la struttura dati che accoglie la matrice sparsa sono indicate di seguito.
+L’idea di fondo del pruning è semplice: ogni collegamento tra neuroni ha associato un peso che ne determina l’importanza (avrà letteralmente un peso maggiore nell’influenzare il risultato finale della rete quando il valore della connessione è molto alto o molto basso); da qui l’intuizione per cui, ignorando i collegamenti con peso tendente allo zero, non si altera significativamente il risultato della rete che otterrei considerandoli ~\cite{Pruning}.
+Questo risultato si può ottenere azzerando tali connessioni, ossia mettendo a zero il valore nella matrice dei pesi relativo alla connessione che si intende eliminare. Facendo così però si ottiene solo una parte del risultato che si vuole raggiungere usando il pruning; essendo il valore a zero si potrà verificare l'accuratezza della rete prunata di una percentuale di connessioni, ma non si godrà della riduzione di memoria, in quanto la matrice avrà lo stesso numero di elementi e quindi bisogno dello stesso numero di byte in memoria. Per questo viene in aiuto una particolare struttura dati adatta alla rappresentazione di matrici sparse \footnote{per matrice sparsa si intende una matrice con un certo numero di valori nulli}. 
+Due scelte possibili per la struttura dati che accoglie la matrice sparsa sono indicate di seguito.
 \begin{itemize}
-\item{\textbf{\textit{Compressed Sparse Row}}} ~\cite{CSC}: vengono usati 3 vettori contenenti rispettivamente i valori non nulli della matrice letti riga per riga, gli indici di colonna e i puntatori ai primi valori non nulli delle righe descritti nel modo seguente: 
+\item{\textbf{\textit{compressed sparse row}}} ~\cite{CSC}: vengono usati 3 vettori contenenti rispettivamente i valori non nulli della matrice letti riga per riga, gli indici di colonna e i puntatori ai primi valori non nulli delle righe descritti nel modo seguente: 
 
 $$ptr =
 \bigg \{
@@ -233,69 +253,121 @@ ptr[i] = prt[i - 1] - nz \\
 $$
 dove $nz$ è il numero di elementi non nulli nella riga $i - 1$;
 
-\item{\textbf{\textit{Compressed Sparse Column}}}: simile alla precedente con la differenza che nel primo vettore i valori vengono letti per colonna, vengono memorizzati gli indici di riga per ogni valore e i relativi puntatori alle colonne.
+\item{\textbf{\textit{compressed sparse column}}}: simile alla precedente con la differenza che nel primo vettore i valori vengono letti per colonna, vengono memorizzati gli indici di riga per ogni valore e i relativi puntatori alle colonne.
 \end{itemize}
 
-Così facendo si può calcolare il tasso di compressione ottenuta mediante pruning; notando che quello che cambia è il numero di connessioni che vengono mantenute. Denotando quindi con $\tau$ la soglia, $s_c = \lbrace w_{ij} \,|\, w_{ij} \geq \tau \rbrace$ lo spazio occupato dalla rete compressa e $s$ lo spazio occupato dalla rete originale, la percentuale di memoria risparmiata può essere espressa tramite l'equazione \eqref{compressionRatio}
+Tuttavia questa operazione non è del tutto gratuita: l'operazione di moltiplicazione tra matrice e vettore con queste nuove strutture dati compresse è più lenta.
+In particolare siano $val$ il vettore contenente i valori non nulli, $col$ il vettore contenente gli indici di colonna e $row\_ptr$ il vettore contenente i puntatori alle righe, questi tre vettori costituenti una CSC, inoltre sia $x$ il vettore da moltiplicare, $N$ il numero di colonne del vettore $x$ e $y$ il vettore risultante.
+
+\null\par\null
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+\begin{algorithm}
+\caption{Moltiplicazione CSC per vettore}
+\begin{algorithmic}[1]
+\For {$i \in N$}
+\For {$j \in \{row\_ptr[i],\dots,row\_ptr[i + 1]\}$}
+\State $y[i] \gets y[i] + val[j] \times x[col[j]]$
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\newpage
+
+\subsection{Tasso di compressione}
+
+Il tasso di compressione ottenuto mediante pruning si può calcolare notando che quello che cambia è il numero di connessioni che vengono mantenute rispetto a quelle della rete originale. Denotando quindi con $\tau$ la soglia \footnote{In questo elaborato la soglia per scartare i pesi è stata calcolata come $n$-esimo percentile rispetto alla distribuzione dei pesi nella matrice, per $n \in \{10, \dots, 90 \}$ (quindi per $n=10$ verranno scartate il 10\% circa delle connessioni tra due strati comunicanti e così via)}, $s_c = \lbrace w_{ij} \,|\, w_{ij} \geq \tau \rbrace$ lo spazio occupato dalla rete compressa e $s$ lo spazio occupato dalla rete originale, la percentuale di memoria risparmiata può essere espressa tramite l'equazione
 
 \begin{equation}
 \mathrm{ratio} = \frac{s_c}{s}
-\label{compressionRatio}
 \end{equation}
 
-In questo elaborato la soglia per scartare i pesi è stata calcolata come $n$-esimo percentile rispetto alla distribuzione dei pesi nella matrice, per $n \in \{10, \dots, 90 \}$ (quindi per $n=10$ verranno scartate il 10\% circa delle connessioni tra due strati comunicanti e così via).
+Tuttavia, come si vedrà alla fine del Paragrafo \ref{CSRProblem}, questo è un risultato teorico che non tiene conto del variare della struttura dati utilizzata. Occorre infatti notare che al di sotto di una certa percentuale di pruning l'uso di una struttura dati, quale la CSR, non convenga in termini di memoria occupata.
+
+\newpage
 
 \section{Weight Sharing}
 
-La tecnica del weight sharing prende spunto dal flyweight pattern ~\cite{GOF}: questo è uno strumento di design software che permette di alleggerire la memoria utilizzata facendo condividere un oggetto usato da più istanze piuttosto che crearne più copie.
-Nel caso pratico di una rete neurale gli oggetti da condividere sono i valori delle matrici dei pesi che vengono raggruppati in un singolo valore che riesca a rappresentarli adeguatamente. Questo valore prende il nome di centroide e verrà usato in sostituzione ai pesi raggruppati per le operazioni matriciali. 
+La tecnica del weight sharing prende spunto dal flyweight pattern ~\cite{GOF}: questo è uno strumento di ingengeria del software che permette di ottimizzare la memoria utilizzata facendo condividere un oggetto usato da più istanze piuttosto che crearne più copie. Un esempio concreto potrebbe essere quello riportato nel testo citato sopra, ossia quello di un editor di testo. Occorre distinguere però i due stati dell'oggetto condiviso, quello \textit{interno}, che fa riferimento alle qualità intrinseche dell'oggetto indipendenti dall'utilizzo che ne verrà fatto, e quello \textit{esterno}, che fa riferimento a quelle caratteristiche dipendenti dal contesto che possono mutare senza che muti l'oggetto condiviso. Tornando all'esempio dell'editor di testo, lo stato interno dell'oggetto condiviso è il carattere, mentre quello esterno la posizione all'interno del testo. Una volta creato un oggetto che raggruppi tutte le lettere dell'alfabeto, occorre interrogare tale oggetto condiviso per avere un riferimento alla lettera da inserire nel testo, operazione che chiede meno spazio rispetto alla creazione di un nuovo oggetto carattere ogni volta. 
+
+Nel caso pratico di una rete neurale l'oggetto condiviso è un array e le lettere dell'alfabeto sono i \textit{centroidi}. Il centroide è un valore che rappresenta alcuni valori delle matrici dei pesi che vengono raggruppati in questo singolo valore che riesca a rappresentarli adeguatamente. Questo valore viene usato in sostituzione ai pesi raggruppati per le operazioni matriciali. Come per l'esempio dell'edito di testo anche qui si possono distinguere uno stato interno, il valore numerico del centroide, e uno stato esterno, la posizione all'interno della matrice, o in altre parole il peso della connessione.
 Per stabilire i centroidi si possono usare algoritmi di clustering; in particolare quello usato in questo elaborato è K-Means ~\cite{KMeans}, che verrà spiegato nel dettaglio nel Paragrafo \ref{kmeans}. \\
-Come strutture dati sono stati utilizzati un vettore per ogni strato in cui vengono memorizzati i centroidi come float 32 bit e una matrice in cui memorizzare l'indice del centroide relativo; gli indici sono rappresentati da interi a 16 bit se la dimensione della matrice è superiore a 256, altrimenti da interi a 8 bit. \\
-Per gli esperimenti trattati nell'elaborato, dopo aver fissato il numero di clusters per strato e dopo averne trovato i centroidi, le matrici dei pesi sono state sostituite con le matrici di indici che puntano al relativo centroide. 
+
+\subsection{Tasso di compressione}
+Il tasso di compressione, $\eta$, ottenuto tramite la tecnica del weight-sharing è espresso dalla seguente formula:
+\null\par\null
+$$
+\displaystyle{\eta=\frac{n m \times f(k) + 32k}{32 \times n m}}
+$$
+
+$$\mathrm{dove}\,\,\,\,\,
+\begin{array}{ll}
+k = \mathrm{numero\, di\, centroidi}, \\
+n, m = \mathrm{dimensione\, delle\, matrici}
+\end{array},
+f(k) =
+\bigg \{
+\begin{array}{rl}
+16 & nm > 256 \\
+8 & \mathrm{altrimenti} \\
+\end{array}
+$$
+
+\null\par\null
+
+Come strutture dati sono stati utilizzati un vettore per ogni strato in cui vengono memorizzati i centroidi usando valori float a 32 bit e una matrice in cui memorizzare l'indice del centroide relativo; gli indici sono rappresentati da interi a 16 bit se la dimensione della matrice è superiore a 256, altrimenti da interi a 8 bit. \\
+Per gli esperimenti trattati nell'elaborato, dopo aver fissato il numero di cluster \footnote{insieme dei pesi che vengono raggruppati, il suo centroide, inteso come il loro valor medio, è il valore che li rappresenterà} per strato e dopo averne trovato i centroidi, le matrici dei pesi sono state sostituite con le matrici di indici che puntano al relativo centroide.
+
+\newpage
 
 \subsection{Algoritmo K-Means}\label{kmeans}
-L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html}, che da documentazione segue l’euristica di Lloyd ~\cite{Lloyd}, descritta di seguita.
+L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html}, che da documentazione segue l’euristica di Lloyd ~\cite{Lloyd}, descritta di seguito.
 
 \begin{enumerate}
-\item{Vengono scelti k centroidi casualmente, dove k è il numero di clusters che si vogliono creare}.
-\item{Ogni osservazione viene assegnata ad uno dei centroidi in base alla distanza euclidea dello stesso}.
-\item{I centroidi vengono aggiornati in base alla media dei valori rientranti nel cluster}.
-\item{Se i centroidi sono stati aggiornati si ripete iterativamente dal punto 2, altrimenti l’algoritmo ha trovato i k centroidi}.
+\item{vengono scelti $k$ centroidi casualmente, dove $k$ è il numero di cluster che si vogliono creare};
+\item{ogni osservazione viene assegnata al centroide in base alla minor distanza euclidea};
+\item{i centroidi vengono aggiornati in base alla media dei valori rientranti nel cluster};
+\item{se i centroidi sono stati aggiornati si ripete iterativamente dal punto 2, altrimenti l’algoritmo ha trovato i $k$ centroidi}.
 \end{enumerate}
  
 
 \chapter{Esperimenti}
 
+\section{Dataset utilizzati}
 L'obiettivo di questo tirocinio è quello di verificare l'efficacia di tecniche di compressione su una rete neurale col compito di risolvere il problema del predecessore \ref{probPred}.
-Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo ...} con l’obiettivo di predire il valore di mercato del giocatore. Due tipi differenti di reti sono state usate: la prima che sfrutta le API di Keras, la seconda creata ad hoc per essere successivamente compressa.
+Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019, \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo ...} con l’obiettivo di predire il valore di mercato del giocatore. Due tipi differenti di reti sono state usate: la prima che sfrutta le API di Keras \footnote{https://keras.io/models/model/}, la seconda creata ad hoc in grado di fare operazioni con le nuove strutture dati introdotte da pruning, ovvero le matrici sparse, e weight sharing, con un vettore e una matrice per ogni strato.
 
 Una volta conclusa questa parte si è affrontato il problema della compressione per il problema del predecessore usando un dataset descritto nel dettaglio nel Paragrafo \ref{probPred}.
 
-D'ora in poi si utlizzerà il termine feature per indicare una caratteristica che la rete usa durante la fase di training per predire il risultato e target per indicare il valore da predire in base alle feature in input.
-
-\section{Dataset utilizzati}
+D'ora in poi si utlizzerà il termine \textit{feature} per indicare una caratteristica che la rete usa durante la fase di training per predire il risultato e \textit{target} per indicare il valore da predire in base alle feature in input.
 
 \subsection{Fifa 2019}
 
-Il primo dataset utilizzato è stato quello dei giocatori fifa, composto da 89 feature e circa 18.2k esempi. 
-Una volta eliminate le feature non necessarie all’esperimento (nome del giocatore, immagine del club, numero di maglia, ecc… ) si è proceduto a convertire tutti i valori numerici rappresentati come stringhe (come “Value”, “Release clause”, “Height”, ecc…) in float e a rimuovere dal dataset tutti gli esempi il cui “Value” risultasse superiore o uguale al valore minimo tra gli outlier trovati. Inoltre i nomi delle squadre di appartenenza sono stati inclusi come feature significative e codificati in valori interi.
+Il primo dataset utilizzato è quello dei giocatori fifa, composto da 89 feature e circa 18.2k esempi; il target da predire sarà il loro valore di mercato.
+Una volta eliminate le feature non necessarie all’esperimento (nome del giocatore, immagine del club, numero di maglia, ecc… ) si è proceduto a convertire tutte le feature rappresentate come stringhe (come ``Value'', ``Release clause'', ``Height'', ecc…) in float e a rimuovere dal dataset tutti gli esempi il cui ``Value'' risultasse superiore o uguale al valore minimo tra gli outlier trovati, questo per evitare una prestazione peggiore in fase di training e testing ~\cite{Outlier}. Inoltre i nomi delle squadre di appartenenza sono stati inclusi come feature significative e codificati in valori interi.
 
-Terminata questa fase preliminare si è deciso di considerare diverse alternative: la prima in cui vengono considerate tutte le feature a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y} fosse maggiore di 0.55.
-È stata considerata anche una terza opzione: selezionare la metà delle feature tramite la Principal Component Analysis (PCA) che permette di ridurre la cardinalità di un insieme di dati costituito da un elevato numero di variabili interconnesse, mantenendo il più possibile la variazione presente in esso ~\cite{PCA}. 
+Terminata questa fase preliminare si è deciso di considerare diverse alternative: la prima in cui vengono considerate tutte le feature a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y} calcolato rispetto al target fosse maggiore di 0.55.
+È stata considerata anche una terza opzione: selezionare la metà delle feature tramite la Principal Component Analysis (PCA) che permette di ridurre la dimensione di un insieme di dati costituito da un elevato numero di variabili interconnesse, mantenendo il più possibile la variabilità presente in esso ~\cite{PCA}. 
 
 \subsection{Problema del predecessore}\label{probPred}
-Se si vuole mantenere una lista di elementi ordinati per poi riuscire ad accedervi in poco tempo esistono delle strutture dati pensate apposta come ad esempio gli alberi binari bilanciati. Il tempo di accesso a queste strutture dati è dell'ordine di $O(log\,n)$, dove $n$ è il numero totale di elementi. Nonostante questo sia uno dei risultati migliori usando le strutture dati attualmente a disposizione, si è pensato di sfruttare le reti neurali per predire la posizione di un elemento all'interno di una lista; in questo caso il tempo di accesso sarebbe $O(1)$, ossia costante. \\
-Per questo problema sono stati utilizzati tre dataset, rispettivamente con $512$, $8192$ e $1048576$ esempi. Le feature sono state rappresentate in codifica binaria e rappresentano gli elementi della lista, mentre i target sono i rispettivi valori della funzione di ripartizione empirica della loro distribuzione.
-Il problema si pone il seguente quesito: data una lista di interi ordinata e un intero $x$, predire l'indice del predecessore di $x$. In questa versione si considereranno solamente valori di $x$ già presenti nella lista e il problema non si occuperà di operazioni di aggiornamento della lista quali inserimento ed eliminazione.
-Il problema viene affrontato addestrando la rete ad associare ad ogni elemento della lista il valore della sua funzione di ripartizione empirica in modo poi da essere in grado di ottenere l'indice del predecessore tramite la formula \eqref{empirical}. 
+Se si vuole mantenere una lista di elementi ordinati per poi riuscire ad accedervi in poco tempo esistono delle strutture dati dedicate come ad esempio gli alberi binari bilanciati. Il tempo di accesso a queste strutture dati è dell'ordine di $O(log\,n)$, dove $n$ è il numero totale di elementi. Nonostante questo sia uno dei risultati migliori usando le strutture dati attualmente a disposizione, si è pensato di sfruttare le reti neurali per predire la posizione di un elemento all'interno di una sequenza ordinata di elementi con l'obiettivo di predire una posizione nella sequenza, data una chiave da cercare, più velocemente ma ammettendo anche un margine d'errore. \\
+Formalmente, siano $x_1 \leq x_2 \leq \dots x_n$ gli $n$ elementi di input $x_i \in \mathbb{N}$.\\
+Problema: dato $x \in X = \{x_1, x_2, \dots, x_m\}$, restituire $\mathrm{pred}(x) \in \{1, 2, \dots m\}$, posizione del predecessore di $x$ nella sequenza.
+Il problema può essere risolto mediante una stima $\hat{F}$ della funzione di ripartizione empirica rispetto a $X$. La stima di $F$ viene ottenuta addestrando la rete neurale sugli esempi $\{x_i, F(x_i)\}$, $i \in \{1, 2, \dots, m \}$; l'indice del predecessore di $x \in X$ può essere stimato mediante la formula \eqref{empirical}.
+Per questo problema sono stati utilizzati tre dataset, rispettivamente con $512$, $8192$ e $1048576$ esempi. Gli elementi $x_i$ sono stati rappresentati in codifica binaria. In questa versione si considereranno solamente valori di $x$ già presenti nella lista e il problema non si occuperà di operazioni di aggiornamento della lista quali inserimento ed eliminazione.
 \begin{equation}
-\lceil\hat{F}(x)\times n\rceil
+\mathrm{pred(x)} = \lceil\hat{F}(x)\times m\rceil
 \label{empirical}
 \end{equation}
 
-\section{Architettura della rete}\label{architettura}
-La prima rete considerata è stata costruita sfruttando delle API di Keras \footnote{https://keras.io/models/model/}. La rete è composta da uno strato di input con un numero di neuroni pari al numero di feature considerate, uno strato hidden con $n$ neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta al Paragrafo \ref{crossvalidation}.
+\section{Architettura delle reti}\label{architettura}
+\subsection{Rete Keras}
+La prima rete considerata è stata costruita sfruttando delle API di Keras \footnote{https://keras.io/models/model/}. La rete è composta da uno strato di input con un numero di neuroni pari al numero di feature considerate, pari a $\log_2 n$, uno strato hidden con $m$ neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta al Paragrafo \ref{crossvalidation}.
 
+\subsection{Rete per il problema del predecessore}\label{reteAdHoc}
 Per il secondo problema sono state usate tre reti differenti:
 \begin{itemize}
 \item{rete 1 con 0 strati hidden};
@@ -308,23 +380,25 @@ Per tutte e tre le versioni gli iperparametri usati sono:
 \item{momentum update}\footnote{valore che è compreso tra 0 e 1 che velocizza la discesa del gradiente verso il minimo globale ~\cite{Momentum}}: $0.9$;
 \item{$\lambda$}\footnote{usato per nella regolarizzazione l2, valore aggiunto alla loss function che forza pesi a scalare, penalizzando i pesi più grandi, riducendo così il problema di overfitting ~\cite{L2}}: $10^{-5}$;
 \item{batch size}: $64$;
-\item{epoche}: $20000$
-\item{stop function}: vengono fissate due soglie, $s_1$ e $s_2$; l'apprendimento termina quando il valore della loss function non supera $s_1$ per $s_2$ volte consecutive.
+\item{epoche}: $20000$;
+\item{stop function}: vengono fissate due soglie, $s_1$ e $s_2$; l'apprendimento termina quando il valore della loss function non è inferiore a $s_1$ per $s_2$ volte consecutive; dove $s_1$ viene fissato inizialmente a 100 e poi aggiornato con il valore di loss più basso ottenuto e $s_2 = 4$.
 \end{itemize}
-Per la rete 1 è stato usato un learning rate di $5 \times 10^{-4}$, mentre per le altre due di $3 \times 10^{-3}$
+Per la rete 1 è stato usato un learning rate di $5 \times 10^{-4}$, mentre per le altre due di $3 \times 10^{-3}$.
+
+D'ora in poi ci si riferirà a questa rete come \textbf{NNX}, dove X sarà il numero di strati.
 
 \subsection{Oragnizzazione dei dati}
-Per quanto riguarda il dataset di fifa, una volta mescolati gli esempi randomicamente, sono stati estratti l'80\% degli esempi come training set e il restante 20\% per il testing set. Inoltre entrambi i set sono stati ulteriormente divisi in X\_train e X\_test (contenente solo le colonne di feature) e y\_train e y\_test (contenente solo il target, cioè “Value”). Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler di sklearn che utilizza la formula \eqref{standardscaler}
+Per quanto riguarda il dataset di Fifa, una volta mescolati gli esempi in maniera casuale, sono stati estratti l'80\% degli esempi come training set e il restante 20\% come testing set. Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler di sklearn che utilizza la formula \eqref{standardscaler}
 \begin{equation}
-z = \frac{x - u}{s}
+z = \frac{x - u}{std}
 \label{standardscaler}
 \end{equation}
-dove u è la media del campione e s è la deviazione standard del campione.
+dove $u$ è la media del campione e $std$ è la deviazione standard del campione.
 
-Per il secondo dataset vengono usati tutti gli esempi nel training, dopo essere stati permutati randomicamente, come feature; i target invece vengono ricavati tramite la funzione numpy linspace che, dati i due estremi $s$ e $e$ di un intervallo e un intero $x$, restituisce un array di $x$ valori ordinati equamente spaziati compresi tra $s$ ed $e$.
+Per il secondo dataset vengono usati tutti gli esempi nel training, dopo essere stati permutati casualmente, come feature; i target invece vengono ricavati tramite la funzione numpy linspace che, dati due estremi di un intervallo e un intero $x$, restituisce un array di $x$ valori ordinati equamente spaziati compresi tra gli estremi indicati. Ad esempio utilizzando come estremi i valori 2 e 3 e $x = 5$, otterrei i valori $[2, 2.25, 2.5, 2.75, 3]$.
 
-\subsection{Addrestramento}
-Per scegliere il giusto numero di neuroni per lo strato hidden si è proceduto con una cross-validation (Paragrafo \ref{crossvalidation}). Di seguito vengono riportati gli iper-parametri scelti per la rete:
+\subsection{Addrestramento}\label{relu}
+Per scegliere il giusto numero di neuroni per lo strato hidden della rete Keras per predire il valore di mercato dei calciatori, si è proceduto con una cross-validation (Paragrafo \ref{crossvalidation}). Di seguito vengono riportati gli iper-parametri scelti per la rete:
 \begin{itemize}
 \item{funzione d’attivazione}:
 
@@ -338,10 +412,10 @@ x & x > 0 \\
 \end{array}
 $
 } per i neuroni dello strato hidden};
-\item{lineare per il neurone d'output};
+\item{identità per il neurone d'output};
 \end{itemize}
 
-\item{loss function}: errore medio quadratico \footnote{
+\item{loss function}: errore quadratico medio \footnote{
 $\displaystyle{\frac{\sum_{i=1}^n \left(x_i - y_i\right)^2}{n}} \; \textit{dove x è l'i-esimo valore predetto, y è l'i-esimo target}$
 };
 
@@ -362,15 +436,17 @@ Il numero di fold esterni è stato impostato a 5, provando per l'unico hidden la
 
 \section{Risultati}
 
-\subsection{Rete Keras}
+\subsection{Risultati addestrando la rete mediante utility della libreria Keras}
 
-I risultati migliori per singolo fold, considerando tutte le feature, sono riportati in tabella \ref{keras_all} 
+I risultati per ogni fold sono riportati in tabella \ref{keras_all_types}, mentre i risultati dei test usando il numero di neuroni in corrispondeza dell'accuracy massima sono riportati in tabella \ref{keras_test_all_types}
 
 \begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
+\begin{tabular}{ccc}
 \toprule
-Fold & Accuracy & Neurons \\
+Tutte le futures & Selezione per correlazione & Selezione per PCA \\
+\midrule
+\begin{tabular}{ccc}
+Fold & Accuratezza & h \\
 \midrule
 1 & 0.9937 & 190\\
 2 & 0.9938 & 180\\
@@ -379,34 +455,9 @@ Fold & Accuracy & Neurons \\
 5 & 0.9928 & 190\\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Numero di neuroni strato hidden $n \in \{10, \dots, 200 \}$}
-\label{keras_all}
-\end{table}
-
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Accuracy & Mean Error & Neurons \\
-\midrule
-0.9933 & 108251 & 180\\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Risultato test con 180 neuroni e tutte le feature}
-\label{keras_all_test}
-\end{table}
-
-\newpage
-
-I risultati migliori per singolo fold, considerando solo le feature con correlazione superiore a 0.55, sono riportati in tabella \ref{keras_corr}
-
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Fold & Accuracy & Neurons \\
+      &        
+\begin{tabular}{ccc}
+Fold & Accuratezza & h \\
 \midrule
 1  & 0.9723 & 200\\
 2  & 0.9691 & 160\\
@@ -414,22 +465,10 @@ Fold & Accuracy & Neurons \\
 4  & 0.9801 & 180\\
 5  & 0.9698 & 190\\
 \bottomrule
-\end{tabular}
-\end{center}
-\caption{Numero di neuroni strato hidden $n \in \{10, \dots, 200 \}$}
-\label{keras_corr}
-\end{table}
-
-\par\null\par
-\par\null\par
-
-I risultati migliori per singolo fold, considerando le feature selezionate con PCA, sono riportati in tabella \ref{keras_pca}
-
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Fold & Accuracy & Neurons \\
+\end{tabular}    
+    &      
+\begin{tabular}{ccc}
+Fold & Accuratezza & h \\
 \midrule
 1 & 0.9955 & 200\\
 2 & 0.9947 & 160\\
@@ -438,39 +477,61 @@ Fold & Accuracy & Neurons \\
 5 & 0.9944 & 180\\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Numero di neuroni strato hidden $n \in \{10, \dots, 200 \}$}
-\label{keras_pca}
+
+\end{tabular}
+\caption{Tabella raggruppativa dei risultati per tutte le feature, quelle selezionate tramite indice di correlazione e quelle tramite PCA}
+\label{keras_all_types}
 \end{table}
 
 \begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
+\begin{adjustwidth}{-1.2 cm}{}
+\begin{tabular}{ccc}
 \toprule
-Accuracy & Mean Error & Neurons \\
+Tutte le futures & Selezione per correlazione & Selezione per PCA \\
+\midrule
+\begin{tabular}{ccc}
+Acc& Errore medio & h \\
+\midrule
+0.9933 & 108251 & 180\\
+\bottomrule
+\end{tabular}
+      &        
+\begin{tabular}{ccc}
+Acc & Errore medio & h \\
+\midrule
+0.9591 & 161702 & 180\\
+\bottomrule
+\end{tabular}    
+    &      
+\begin{tabular}{ccc}
+Acc & Errore medio & h \\
 \midrule
 0.9927 & 112081 & 200\\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Risultato test con 200 neuroni e feature selezionate tramite PCA}
-\label{keras_pca_test}
+
+\end{tabular}
+\caption{Risultati dei test utilizzando i risultati migliori elencati in Tabella \ref{keras_all_types}}
+\label{keras_test_all_types}
+\end{adjustwidth}
 \end{table}
 
-\par\null\par
 
-Osservato il risultato migliore in corrispondenza del numero massimo di neuroni si è deciso di inserire un ulteriore strato hidden riducendo l'intervallo di neuroni in fase di cross validation, da 10 a 40.
+Osservato il risultato migliore in corrispondenza del numero massimo di neuroni si è deciso di inserire un ulteriore strato hidden.
 Inoltre si è deciso di proseguire considerando tutte le feature e quelle selezionate tramite PCA.
 
-I risultati migliori per singolo fold, considerando tutte le feature, sono riportati in tabella \ref{keras_all_2h}
+I risultati per ogni fold, considerando tutte le feature e quelle selezionate tramite PCA, sono riportati in tabella \ref{keras_all_types_2h}; i risultati dei test in tabella \ref{keras_test_all_types_2h}
 
 \par\null\par
 
 \begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
+\begin{adjustwidth}{1.55cm}{}
+\begin{tabular}{ccc}
 \toprule
-Fold & Accuracy & Neurons \\
+Tutte le futures & Selezione per PCA \\
+\midrule
+\begin{tabular}{ccc}
+Fold & Accuratezza & h \\
 \midrule
 1 & 0.9960 & 70, 90\\
 2 & 0.9961 & 100, 80\\
@@ -479,33 +540,9 @@ Fold & Accuracy & Neurons \\
 5 & 0.9961 & 90, 70\\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Numero di neuroni strati hidden $n \in \{10, \dots, 100 \}$}
-\label{keras_all_2h}
-\end{table}
-
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Accuracy & Mean Error & Neurons \\
-\midrule
-0.9945 & 98218 & 100, 90\\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Risultato test con (100, 90) neuroni e tutte le feature}
-\label{keras_all_test_2h}
-\end{table}
-
-I risultati migliori per singolo fold, considerando le feature selezionate tramite PCA, sono riportati in tabella \ref{keras_pca_2h}
-
-\par\null\par
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Fold & Accuracy & Neurons \\
+      &        
+\begin{tabular}{ccc}
+Fold & Accuratezza & h \\
 \midrule
 1 & 0.9964 & 100, 90\\
 2 & 0.9962 & 100, 90\\
@@ -514,29 +551,42 @@ Fold & Accuracy & Neurons \\
 5 & 0.9963 & 100, 60\\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Numero di neuroni strati hidden $n \in \{10, \dots, 100 \}$}
-\label{keras_pca_2h}
+\end{tabular}
+\caption{Tabella con i risultati ottenuti considerando un numero di neuroni compreso tra 10 e 100 per entrambi gli strati nascosti}
+\label{keras_all_types_2h}
+\end{adjustwidth}
 \end{table}
+
 
 \begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
+\begin{adjustwidth}{0.1cm}{}
+\begin{tabular}{ccc}
 \toprule
-Accuracy & Mean Error & Neurons \\
+Tutte le futures & Selezione per PCA \\
 \midrule
-0.9935 & 102477 & 80, 100\\
+\begin{tabular}{ccc}
+Accuratezza & Errore medio & h \\
+\midrule
+0.9951 & 98218 & 100, 90\\
 \bottomrule
 \end{tabular}
-\end{center}
-\caption{Risultato test con (80, 100) neuroni e le feature selezionate tramite PCA}
-\label{keras_pca_test_2h}
+      &        
+\begin{tabular}{ccc}
+Accuratezza & Errore medio & h \\
+\midrule
+0.9945 & 102477 & 80, 100\\
+\bottomrule
+\end{tabular}    
+\end{tabular}
+\caption{Risultati di test ottenuto considerando i risultati migliori ottenuti in Tabella \ref{keras_all_types_2h}}
+\label{keras_test_all_types_2h}
+\end{adjustwidth}
 \end{table}
 
 \par\null\par
 \par\null\par
 
-\subsection{Rete ad hoc}\label{reteAdHoc}
+\subsection{Risultati addestrando la rete con utility di compressione}\label{reteAdHoc}
 Purtroppo la rete costruita usando le API di Keras non si presta alla manipolazione necessaria per la compressione, né per il pruning, non c’è modo per mantenere inattive le connessioni tagliate, né per il weight sharing, non c’è compatibilità con le nuove strutture dati necessarie alla tecnica stessa.
 Come per la rete precedente si sono usati gli stessi iper-parametri eccezion fatta per il numero di neuroni degli strati nascosti: per questi si è proceduto con una cross-validation i cui risultati sono riportati nelle tabelle \ref{hoc2_10_40} e \ref{hoc2_10_100}
 \par\null\par
@@ -544,9 +594,9 @@ Come per la rete precedente si sono usati gli stessi iper-parametri eccezion fat
 \begin{center}
 \begin{tabular}{lcr}
 \toprule
-Fold & Accuracy & Neurons \\
+Fold & Accuratezza & h \\
 \midrule
-1 & 0.9946 & 30, 30\\
+1 & 0.9951 & 30, 30\\
 2 & 0.9959 & 40, 40\\
 3 & 0.9958 & 40, 30\\
 4 & 0.9953 & 40, 40\\
@@ -558,27 +608,15 @@ Fold & Accuracy & Neurons \\
 \label{hoc2_10_40}
 \end{table}
 
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Accuracy & Mean Error & Neurons \\
-\midrule
-0.9933 & 113366 & 40, 40\\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Risultato test con (40, 90) neuroni e tutte le feature}
-\label{hoc_all_test_40}
-\end{table}
+Il risultato usando il test set in corrispondenza del risultato migliore ottenuto alla tabella sopra ha raggiunto un'accuratezza di 0.9948 e un errore medio di 107366.
 
-\newpage
+\null\par\null
 
 \begin{table}[H]
 \begin{center}
 \begin{tabular}{lcr}
 \toprule
-Fold & Accuracy & Neurons \\
+Fold & Accuratezza & h \\
 \midrule
 1 & 0.9958 & 80, 90\\
 2 & 0.9963 & 100, 80\\
@@ -592,35 +630,27 @@ Fold & Accuracy & Neurons \\
 \label{hoc2_10_100}
 \end{table}
 
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{lcr}
-\toprule
-Accuracy & Mean Error & Neurons \\
-\midrule
-0.9938 & 102742 & 90, 90\\
-\bottomrule
-\end{tabular}
-\end{center}
-\caption{Risultato test con (90, 90) neuroni e tutte le feature}
-\label{hoc_all_test_100}
-\end{table}
+Il risultato usando il test set in corrispondenza del risultato migliore ottenuto alla tabella sopra ha raggiunto un'accuratezza di 0.9953 e un errore medio di 97742.
 
 \newpage
 
-\subsection{Rete ad hoc per il problema del predecessore}
-In questo paragrafo vengono riportati i risultati sull'argomento principale di questo elaborato.
-La struttura della rete è quella presentata nel Paragrafo \ref{architettura} e i tre file utilizzati contengono rispettivamente 512, 8192 e 1048576 esempi.
-Per ogni tabella riportata la prima riga indica i risultati ottenuti dalla rete ad hoc non compressa, in modo da poter effetture un confronto con le righe successive indicanti i risultati di pruning e weight sharing.
+\subsection{Rete per il problema del predecessore}
+In questo paragrafo vengono riportati i risultati riguardanti il problema del predecessore.
+La struttura della rete è quella presentata nel Paragrafo \ref{architettura} e i dataset utilizzati contengono rispettivamente 512, 8192 e 1048576 esempi.
+Per ogni tabella riportata la prima riga indica i risultati ottenuti dalla rete presentata nel Paragrafo \ref{reteAdHoc} non compressa, in modo da poter effetture un confronto con le righe successive indicanti i risultati di pruning e weight sharing.
 
-\subsection{Pruning rete ad hoc}
+\subsection{Pruning rete per il problema del predecessore} \label{CSRProblem}
 In questo paragrafo verranno illustrati i risultati ottenuti comprimendo la rete utilizzata nel sottoparagrafo \ref{reteAdHoc} con la tecnica del pruning.
 Di seguito vengono spiegati i valori delle colonne.
 \begin{itemize}
+\item{NN1}: rete con 0 strati hidden;
+\item{NN2}: rete con uno strato hidden con 256 neuroni;
+\item{NN3}: rete con due strati hidden, entrambi con 256 neuroni;
 \item{pruning}: percentuale di connessioni eliminate; il valore 0 indica la rete non compressa;
-\item{space overhead}: la frazione di spazio usata dalla rete per memorizzare l'indice rispetto alla dimensione del dataset misurato in kilobytes;
+\item{space overhead}: la frazione di spazio usata dalla rete per memorizzare la rete rispetto alla dimensione del dataset misurato in kilobytes tramite la formula 
+$$\displaystyle{\frac{\sum_{i=1}^n \left(|\mathrm{strato}_i|\right) \times \mathrm{bytes} \times 100}{1024 \times \left| \mathrm{dataset} \right|}}$$ dove per $\mathrm{strato}_i$ viene presa in considerazione la cardinalità delle strutture dati utilizzate per memorizzare i pesi per l'$i$-esimo strato, bytes rappresenta il numero di bytes utilizzato per rappresentare i pesi all'interno delle strutture dati;
 \item{training time}: tempo in secondi impiegato dalla rete per il training dopo la compressione;
-\item{$\epsilon$}: errore massimo in fase di retraining;
+\item{$\epsilon$}: errore massimo sugli esempi di training;
 \item{error \%}: errore massimo rispetto alla dimensione del dataset considerato;
 \item{mean error}: errore medio.
 \end{itemize}
@@ -629,36 +659,34 @@ Di seguito vengono spiegati i valori delle colonne.
 
 \input{risultati_pruning}
 
+\par\null\par
+\par\null\par
+\par\null\par
+\par\null\par
+
+È interessante notare come, non comprimendo abbastanza, ovvero non più della metà delle connessioni, non si ottenga una matrice abbastanza sparsa da convernire l'utilizzo di strutture dati come le CSC; queste infatti occuperanno più spazio di una matrice densa più è alto il numero di valori non nulli in quanto useranno tre vettori, come descritto nel Paragrafo \ref{pruning}.
+Ad esempio una matrice dei pesi, senza valori nulli, di dimensione $3 \times 3$ in cui i pesi sono rappresentati da float32, occuperà 36 bytes; usando invece una csc si occuperanno 88 bytes in memoria.
+
 \newpage
 
-\subsection{Weight sharing rete ad hoc}
+\subsection{Weight sharing rete per il problema del predecessore}
 In questo paragrafo verranno illustrati i risultati ottenuti comprimendo la rete utilizzata nel sottoparagrafo \ref{reteAdHoc} con la tecnica del weight sharing.
 Di seguito vengono spiegati i valori delle colonne.
 \begin{itemize}
-\item{$\eta$}: proporzione dello spazio originario occupato da quella compressa; il valore 0 indica la rete non compressa $$\eta=\left(\frac{n m \times f(k) + 32k}{32 \times n m}\right)$$ 
-\begin{multline}
-$$dove \,\,\,\,\,
-f(k) =
-\bigg \{
-\begin{array}{rl}
-16 & nm > 256 \\
-8 & altrimenti, \\
-\end{array}
-\begin{array}{ll}
-k = numero\, di\, centroidi, \\
-n, m = dimensione\, delle\, matrici
-\end{array}
-$$;
-\end{multline}
-\item{clusters}: indica, per ogni matrice dei pesi della rete, il numero di clusters utilizzati;
-\item{space overhead}: la frazione di spazio usata dalla rete per memorizzare l'indice rispetto alla dimensione del dataset misurato in kilobytes;
+\item{NN1}: rete con 0 strati hidden;
+\item{NN2}: rete con uno strato hidden con 256 neuroni;
+\item{NN3}: rete con due strati hidden, entrambi con 256 neuroni;
+\item{$\eta$}: proporzione dello spazio originario occupato da quella compressa; il valore 1 indica la rete non compressa;
+\item{cluster}: indica, per ogni matrice dei pesi della rete, il numero di cluster utilizzati;
+\item{space overhead}: la frazione di spazio usata dalla rete per memorizzare la rete rispetto alla dimensione del dataset misurato in kilobytes tramite la formula 
+$$\displaystyle{\frac{\sum_{i=1}^n \left(|\mathrm{strato}_i|\right) \times \mathrm{bytes} \times 100}{1024 \times \left| \mathrm{dataset} \right|}}$$ dove per $\mathrm{strato}_i$ viene presa in considerazione la cardinalità delle strutture dati utilizzate per memorizzare i pesi per l'$i$-esimo strato, bytes rappresenta il numero di bytes utilizzato per rappresentare i pesi all'interno delle strutture dati;
 \item{training time}: tempo in secondi impiegato dalla rete per il training dopo la compressione;
 \item{$\epsilon$}: errore massimo in fase di retraining;
 \item{error \%}: errore massimo rispetto alla dimensione del dataset considerato;
-\item{mean error}: errore medio;
+\item{mean error}: errore medio.
 \end{itemize}
 \par\null\par
-È interessante notare come per la rete a zero strati non siano riportati tassi di compressione inferiori al 30\% e per le singolo e doppio strato inferiori al 60\%. Questo è dovuto alla scelta di determinare il numero di cluster per strato usando la formula \eqref{etaSharing}.
+Si noti come per la rete a zero strati non siano riportati tassi di compressione inferiori al 30\% e per le singolo e doppio strato inferiori al 60\%. Questo è dovuto alla scelta di determinare il numero di cluster per strato usando la formula \eqref{etaSharing}.
 
 \begin{equation}
 \mathrm{cluster}=\left(\frac{c_p \times 32d - db}{32}\right)
@@ -671,13 +699,13 @@ dove $c_p \in [0,\dots,1]$ è il tasso di compressione che si vuole ottenere, $d
 \par\null\par
 \par\null\par
 
-
 \input{risultati_ws}
 
-\chapter{Conclusioni}
-In questo elaborato si è affrontato il problema di come comprimere una rete neurale usata per fare regressione impatti su diversi aspetti della stessa, principalmente sul trade off tra accuratezza e dimensione occupata in memoria. Si è partiti da un caso particolare di regressione, la previsione del valore di mercato di giocatori di calcio, permettendo la comprensione della struttura di una rete neurale adatta a trattare tale problema. Una volta osservati i risultati ottenuti si è passati al problema del predecessore decidendo di affrontarlo usando tre diversi modelli di rete; a zero, singolo e doppio strato nascosto. Dai risultati ottenuti si può evincere che, sia con la tecnica di pruning che weight sharing, si ottengono dei buoni risultati considerando il rapporto accuratezza e memoria occupata. In particolare si può notare che eliminando fino al 60\% di connessioni tramite pruning si continua ad ottenere un errore massimo e medio inferiore alla rete originaria, il che si può leggere anche come un risparmio fino a più della metà dello spazio occupato dalle matrici della rete. C'è tuttavia da considerare anche il fattore tempo; usare una struttura dati come le matrici sparse richiede più tempo in fase di training in quanto le operazioni di moltiplicazione tra CSC diventano più dispendiose in termini di tempo. Ciònonostante questa problematica si presenta in fase di training, tempo che può essere ammortizzato su tutte le più numerose operazioni di previsione che si richiederanno alla rete.
-Anche la tecnica di weight sharing ha dato ottimi risultati: infatti, escludendo il caso della rete senza strati nascosti, la rete compressa ha sempre dato risultati migliori o uguali in termini di errore medio, massimo e percentuale rispetto a quella originale. Si ripropone un pattern simile a quello del pruning; sono state ottenute delle reti con accuratezza simile o addirittura migliori come accuracy e meno onerose in termini di memoria ma con un training time più lungo, anche in questo caso dato dalle strutture dati impiegate (per le moltiplicazioni matriciali bisogna, per ogni elemento, accedere al relativo centroide, avendo quindi un doppio accesso), ma anche in questo caso il tempo di addestramento è ammortizzabile.
-In conclusione, il raggiungimento dell'obiettivo di ridurre la memoria necessaria ad una rete neurale per fare regressione consente a queste ultime di essere utilizzate anche su macchine con ridotte quantità di memoria e di computazione, nonché di un ridotto consumo di risorse energetiche e computazionali. 
+\chapter*{Conclusioni}
+\addcontentsline{toc}{chapter}{Conclusioni}
+In questo elaborato si è affrontato il problema di come comprimere una rete neurale usata per fare regressione impatti su diversi aspetti della stessa, principalmente sul compromesso tra accuratezza e dimensione occupata in memoria. Si è partiti da un caso particolare di regressione, la previsione del valore di mercato di giocatori di calcio, permettendo la comprensione della struttura di una rete neurale adatta a trattare tale problema. Una volta osservati i risultati ottenuti si è passati al problema del predecessore decidendo di affrontarlo usando tre diversi modelli di rete; a zero, singolo e doppio strato nascosto. Dai risultati ottenuti si può evincere che, sia con la tecnica di pruning che weight sharing, si ottengono dei buoni risultati considerando il rapporto accuratezza e memoria occupata. In particolare si può notare che eliminando fino al 60\% di connessioni tramite pruning si continua a ottenere un errore massimo e medio inferiore alla rete originaria, il che si può leggere anche come un risparmio fino a più della metà dello spazio occupato dalle matrici della rete. C'è tuttavia da considerare anche il fattore tempo; usare una struttura dati come le matrici sparse richiede più tempo in fase di training in quanto le operazioni di moltiplicazione tra CSC diventano più dispendiose in termini di tempo. Ciònonostante questa problematica si presenta in fase di training, tempo che può essere ammortizzato su tutte le più numerose operazioni di previsione che si richiederanno alla rete.
+Anche la tecnica di weight sharing ha dato buoni risultati: infatti, escludendo il caso della rete senza strati nascosti, la rete compressa ha sempre dato risultati migliori o uguali in termini di errore medio, massimo e percentuale rispetto a quella originale. Si ripropone un pattern simile a quello del pruning; sono state ottenute delle reti con accuratezza simile o addirittura migliori come accuracy e meno onerose in termini di memoria ma con un training time più lungo, anche in questo caso dato dalle strutture dati impiegate (per le moltiplicazioni matriciali bisogna, per ogni elemento, accedere al relativo centroide, avendo quindi un doppio accesso), ma anche in questo caso il tempo di addestramento è ammortizzabile.
+In conclusione, il raggiungimento dell'obiettivo di ridurre la memoria necessaria a una rete neurale per fare regressione consente a queste ultime di essere utilizzate anche su macchine con ridotte quantità di memoria e di computazione, nonché di un ridotto consumo di risorse energetiche e computazionali. 
 
 \bibliography{bibliography}{}
 \bibliographystyle{unsrt}
