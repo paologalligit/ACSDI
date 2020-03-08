@@ -362,8 +362,8 @@ L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans ~\cite{KMe
 \chapter{Esperimenti}
 
 \section{Dataset utilizzati}
-L'obiettivo di questo tirocinio è quello di verificare l'efficacia di tecniche di compressione su una rete neurale col compito di risolvere il problema del predecessore trattato nel Paragrafo \ref{probPred}.
-Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo 01/03/2020}, con l’obiettivo di predire il valore di mercato del giocatore. Sono state usate due differenti tipi di reti: la prima sfrutta le API di Keras \footnote{https://keras.io/models/model/}, mentre la seconda è stata creata ad hoc al fine di poter sfruttare le nuove strutture dati introdotte da pruning, ovvero le matrici sparse, e weight sharing, con un vettore e una matrice per ogni strato.
+L'obiettivo di questo tirocinio è quello di verificare l'efficacia di tecniche di compressione su una rete neurale col compito di risolvere il problema del predecessore in una sequenza ordinata trattato nel Paragrafo \ref{probPred}.
+Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo 01/03/2020}, con il problema di predire il valore di mercato del giocatore. Sono state usate due differenti tipi di reti: la prima sfrutta le API di Keras \footnote{https://keras.io/models/model/}, mentre la seconda è stata creata ad hoc al fine di poter sfruttare le nuove strutture dati introdotte da pruning, ovvero le matrici sparse, e weight sharing, con un vettore e una matrice per ogni strato.
 
 Una volta conclusa questa parte si è affrontato il problema della compressione per il problema del predecessore usando un dataset descritto nel dettaglio nel Paragrafo \ref{probPred}.
 
@@ -377,8 +377,8 @@ Una volta eliminate le feature non necessarie all’esperimento (nome del giocat
 Terminata questa fase preliminare si è deciso di considerare diverse alternative: la prima in cui vengono considerate tutte le feature a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y} calcolato rispetto al target fosse maggiore di 0.55.
 È stata considerata anche una terza opzione: selezionare la metà delle feature tramite la Principal Component Analysis (PCA) che permette di ridurre la dimensione di un insieme di dati costituito da un elevato numero di variabili interconnesse, mantenendo il più possibile la variabilità presente in esso ~\cite{PCA}. 
 
-\subsection{Problema del predecessore}\label{probPred}
-Se si vuole mantenere una lista di elementi ordinati per poi riuscire ad accedervi in poco tempo esistono delle strutture dati dedicate come ad esempio gli alberi binari bilanciati. Il tempo di accesso a queste strutture dati è dell'ordine di $O(log\,n)$, dove $n$ è il numero totale di elementi. Nonostante questo sia uno dei risultati migliori usando le strutture dati attualmente a disposizione, si è pensato di sfruttare le reti neurali per predire la posizione di un elemento all'interno di una sequenza ordinata di elementi con l'obiettivo di predire una posizione nella sequenza, data una chiave da cercare, più velocemente ma ammettendo anche un margine d'errore. \\
+\subsection{Problema del predecessore in sequenze ordinate}\label{probPred}
+Se si vuole mantenere una lista di elementi ordinati per poi riuscire ad accedervi in poco tempo esistono delle strutture dati dedicate come ad esempio gli alberi binari bilanciati TODO: citare i b-tree e b+-tree. Il tempo di accesso a queste strutture dati è dell'ordine di $O(log\,n)$, dove $n$ è il numero totale di elementi. Nonostante questo sia uno dei risultati migliori usando le strutture dati attualmente a disposizione, si è pensato di sfruttare le reti neurali per predire la posizione di un elemento all'interno di una sequenza ordinata di elementi con l'obiettivo di predire una posizione nella sequenza, data una chiave da cercare, più velocemente ma ammettendo anche un margine d'errore. \\
 Formalmente, siano $x_1 \leq x_2 \leq \dots x_n$ gli $n$ elementi di input, con $x_i \in \mathbb{N}$.\\
 Il problema considerato è quindi il seguente: dato $x \in X = \{x_1, x_2, \dots, x_m\}$, restituire $\mathrm{pred}(x) \in \{1, 2, \dots m\}$, posizione del predecessore di $x$ nella sequenza.
 Il problema può essere risolto mediante una stima $\hat{F}$ della funzione di ripartizione empirica $F$ rispetto a $X$. La stima di $F$ viene ottenuta addestrando una rete sugli esempi $\{x_i, F(x_i)\}$, $i \in \{1, 2, \dots, m \}$; l'indice del predecessore di $x \in X$ può essere stimato mediante la formula seguente:
@@ -390,7 +390,7 @@ Per questo problema sono stati utilizzati tre dataset, rispettivamente con $512$
 
 \section{Architettura delle reti}\label{architettura}
 \subsection{Rete Keras}
-La prima rete considerata è stata costruita sfruttando delle API di Keras \footnote{https://keras.io/models/model/}. La rete è composta da uno strato di input con un numero di neuroni pari al numero di feature considerate, pari a $\log_2 n$, uno strato hidden con $m$ neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta al Paragrafo \ref{crossvalidation}.
+La prima rete considerata è stata costruita sfruttando delle API di Keras \footnote{https://keras.io/models/model/}. La rete è composta da uno strato di input con un numero di neuroni pari al numero di feature considerate, pari a $\lceil\log_2 m\rceil$, uno strato hidden con $n$ neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta al Paragrafo \ref{crossvalidation}.
 
 \subsection{Rete per il problema del predecessore}\label{reteAdHoc}
 Per il secondo problema sono state usate tre reti differenti:
@@ -413,14 +413,14 @@ Per la rete 1 è stato usato un learning rate di $5 \times 10^{-4}$, mentre per 
 D'ora in poi ci si riferirà a queste reti come \textbf{NNX}, dove X indica il numero di strati.
 
 \subsection{Oragnizzazione dei dati}
-Per quanto riguarda il dataset Fifa, una volta mescolati gli esempi in maniera casuale, sono stati estratti l'80\% degli esempi come training set e il restante 20\% come testing set. Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler di sklearn che utilizza la seguente formula:
+Per quanto riguarda il dataset Fifa, una volta mescolati gli esempi in maniera casuale, sono stati estratti l'80\% degli esempi come training set e il restante 20\% come testing set. Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler della libreria Python sklearn \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html.} che utilizza la seguente formula:
 \begin{equation}
 z = \frac{x - u}{std}
 \label{standardscaler}
 \end{equation}
 dove $u$ è la media del campione e $std$ è la sua deviazione standard.
 
-Per il secondo dataset vengono usati tutti gli esempi nel training, dopo essere stati permutati casualmente, come feature; i target invece vengono ricavati tramite la funzione numpy linspace che, dati due estremi di un intervallo e un intero $x$, restituisce un array di $x$ valori ordinati equamente spaziati compresi tra gli estremi indicati.
+Per il secondo dataset vengono usati tutti gli esempi nel training, dopo essere stati permutati casualmente; i target invece vengono ricavati tramite la funzione numpy linspace di Python che, dati due estremi di un intervallo e un intero $x$, restituisce un array di $x$ valori ordinati equamente spaziati compresi tra gli estremi indicati.
 
 \subsection{Addrestramento}\label{relu}
 Per scegliere il giusto numero di neuroni per lo strato hidden della rete Keras al fine di predire il valore di mercato dei calciatori, si è proceduto con una cross-validation (Paragrafo \ref{crossvalidation}). Di seguito vengono riportati gli iper-parametri scelti per la rete:
@@ -461,7 +461,7 @@ Il numero di fold è stato impostato a 5, provando per l'unico hidden layer un n
 
 \section{Risultati}
 
-\subsection{Risultati addestrando la rete mediante utility della libreria Keras}
+\subsection{Risultati addestrando la rete mediante utility della libreria Keras per il problema di regressione sul valore di mercato dei giocatori}
 
 I risultati per ogni fold sono riportati in tabella \ref{keras_all_types}, mentre i risultati dei test usando il numero di neuroni in corrispondeza dell'accuracy massima sono riportati in tabella \ref{keras_test_all_types}
 
@@ -517,21 +517,21 @@ Tutte le futures & Selezione per correlazione & Selezione per PCA \\
 \begin{tabular}{ccc}
 Acc& Errore medio & h \\
 \midrule
-0.9933 & 108251 & 180\\
+0.9933 & 0.03  & 180\\
 \bottomrule
 \end{tabular}
       &        
 \begin{tabular}{ccc}
 Acc & Errore medio & h \\
 \midrule
-0.9591 & 161702 & 180\\
+0.9591 & 0.05 & 180\\
 \bottomrule
 \end{tabular}    
     &      
 \begin{tabular}{ccc}
 Acc & Errore medio & h \\
 \midrule
-0.9927 & 112081 & 200\\
+0.9927 & 0.03 & 200\\
 \bottomrule
 \end{tabular}
 
@@ -545,7 +545,7 @@ Acc & Errore medio & h \\
 Osservato il risultato migliore in corrispondenza del numero massimo di neuroni si è deciso di inserire un ulteriore strato hidden.
 Inoltre si è deciso di proseguire considerando tutte le feature e quelle selezionate tramite PCA.
 
-I risultati per ogni fold, considerando tutte le feature e quelle selezionate tramite PCA, sono riportati in tabella \ref{keras_all_types_2h}; i risultati dei test in tabella \ref{keras_test_all_types_2h}
+I risultati per ogni fold, considerando tutte le feature e quelle selezionate tramite PCA, sono riportati in tabella \ref{keras_all_types_2h}; i risultati degli esperimenti in tabella \ref{keras_test_all_types_2h}
 
 \par\null\par
 
@@ -592,14 +592,14 @@ Tutte le futures & Selezione per PCA \\
 \begin{tabular}{ccc}
 Accuratezza & Errore medio & h \\
 \midrule
-0.9951 & 98218 & 100, 90\\
+0.9951 & 0.0327 & 100, 90\\
 \bottomrule
 \end{tabular}
       &        
 \begin{tabular}{ccc}
 Accuratezza & Errore medio & h \\
 \midrule
-0.9945 & 102477 & 80, 100\\
+0.9945 & 0.0342 & 80, 100\\
 \bottomrule
 \end{tabular}    
 \end{tabular}
@@ -629,11 +629,11 @@ Fold & Accuratezza & h \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Numero di neuroni strati hidden $n \in \{10, \dots, 40 \}$}
+\caption{Numero di neuroni strati hidden $h \in \{10, \dots, 40 \}$}
 \label{hoc2_10_40}
 \end{table}
 
-Il risultato usando il test set in corrispondenza del risultato migliore ottenuto alla tabella sopra ha raggiunto un'accuratezza di 0.9948 e un errore medio di 107366.
+Il risultato usando il test set in corrispondenza del risultato migliore ottenuto alla tabella sopra ha raggiunto un'accuratezza di 0.9948 e un errore medio di 0.0357.
 
 \null\par\null
 
@@ -651,18 +651,18 @@ Fold & Accuratezza & h \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Numero di neuroni strati hidden $n \in \{10, \dots, 100 \}$}
+\caption{Numero di neuroni strati hidden $h \in \{10, \dots, 100 \}$}
 \label{hoc2_10_100}
 \end{table}
 
-Il risultato usando il test set in corrispondenza del risultato migliore ottenuto alla tabella sopra ha raggiunto un'accuratezza di 0.9953 e un errore medio di 97742.
+Il risultato usando il test set in corrispondenza del risultato migliore ottenuto alla tabella sopra ha raggiunto un'accuratezza di 0.9953 e un errore medio di 0.0325.
 
 \newpage
 
 \subsection{Rete per il problema del predecessore}
 In questo paragrafo vengono riportati i risultati riguardanti il problema del predecessore.
 La struttura della rete è quella presentata nel Paragrafo \ref{architettura} e i dataset utilizzati contengono rispettivamente 512, 8192 e 1048576 esempi.
-Per ogni tabella riportata la prima riga indica i risultati ottenuti dalla rete presentata nel Paragrafo \ref{reteAdHoc} non compressa, in modo da poter effetture un confronto con le righe successive indicanti i risultati di pruning e weight sharing.
+Per ogni tabella riportata, la prima riga indica i risultati ottenuti dalla rete presentata nel Paragrafo \ref{reteAdHoc} non compressa, in modo da poter effetture un confronto con le righe successive indicanti i risultati di pruning e weight sharing.
 
 \subsection{Pruning rete per il problema del predecessore} \label{CSRProblem}
 In questo paragrafo verranno illustrati i risultati ottenuti comprimendo la rete utilizzata nel sottoparagrafo \ref{reteAdHoc} con la tecnica del pruning.
@@ -672,7 +672,7 @@ Di seguito vengono spiegati i valori delle colonne.
 \item{NN2}: rete con uno strato hidden con 256 neuroni;
 \item{NN3}: rete con due strati hidden, entrambi con 256 neuroni;
 \item{pruning}: percentuale di connessioni eliminate; il valore 0 indica la rete non compressa;
-\item{space overhead}: la frazione di spazio usata dalla rete per memorizzare la rete rispetto alla dimensione del dataset misurato in kilobytes tramite la formula 
+\item{space overhead}: la frazione di spazio usata dalla rete per memorizzare la rete rispetto alla dimensione del dataset, misurato in kilobytes tramite la formula 
 $$\displaystyle{\frac{\sum_{i=1}^n \left(|\mathrm{strato}_i|\right) \times \mathrm{bytes} \times 100}{1024 \times \left| \mathrm{dataset} \right|}}$$ dove per $\mathrm{strato}_i$ viene presa in considerazione la cardinalità delle strutture dati utilizzate per memorizzare i pesi per l'$i$-esimo strato, bytes rappresenta il numero di bytes utilizzato per rappresentare i pesi all'interno delle strutture dati;
 \item{training time}: tempo in secondi impiegato dalla rete per il training dopo la compressione;
 \item{$\epsilon$}: errore massimo sugli esempi di training;
