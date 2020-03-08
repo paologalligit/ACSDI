@@ -109,7 +109,7 @@ Una rete, per essere in grado di apprendere teoricamente qualsiasi funzione, dev
 
 Il ruolo dello strato di input è quello di ricevere le feature da elaborare, lo strato nascosto si occuperà di costruire una rappresentazione intermedia delle feature, che verrà poi elaborata dallo strato di output per fornire il risultato.
 
-Inoltre, in base a come i neuroni dei vari strati sono collegati tra loro, si possono distinguere diverse configurazioni di rete come quella densamente connessa (fully connected), convoluzionale (convolutional) \footnote{a differenza di quelle densamente connesse, i neuroni di uno strato sono collegati solo a una piccola parte dello strato precedente. ~\cite{Convolutional}} usata principalmente per il riconoscimento di pattern in immagini o ancora quella ricorrente \footnote{la particolarità è che l'architettura prevede che siano presenti delle connessioni tra neuroni di uno strato e quello precedente, perdendo così la caratteristica di grafo aciclico; è usata quando è importante l'ordine dei dati, ad esempio nel riconoscimento del parlato o per riconoscere sequenze di stringhe o frame di un video. ~\cite{Recurrent}} .
+Inoltre, in base a come i neuroni dei vari strati sono collegati tra loro, si possono distinguere diverse configurazioni di rete come quella densamente connessa (fully connected), convoluzionale (convolutional) \footnote{a differenza di quelle densamente connesse, i neuroni di uno strato sono collegati solo a una piccola parte dello strato precedente ~\cite{Convolutional}.} usata principalmente per il riconoscimento di pattern in immagini o ancora quella ricorrente \footnote{la particolarità è che l'architettura prevede che siano presenti delle connessioni tra neuroni di uno strato e quello precedente, perdendo così la caratteristica di grafo aciclico; è usata quando è importante l'ordine dei dati, ad esempio nel riconoscimento del parlato o per riconoscere sequenze di stringhe o frame di un video ~\cite{Recurrent}.} .
 In questo elaborato ci si concentrerà sulla tipologia densamente connessa, in cui ogni neurone di uno strato sarà collegato a ogni neurone di quello successivo, come mostrato in Figura \ref{ReteNeuraleDensamenteConnessa}.
 
 Come detto sopra, la rete è composta da strati; gli strati, a loro volta, sono un insieme di neuroni, ognuno dei quali ha associato un peso ($w$) per ogni collegamento in entrata e un bias ($b$). Questi devono essere prima inizializzati ~\cite{ParametersInitialization}; esistono diversi modi di farlo (ad esempio estraendo valori da una distribuzione uniforme o gaussiana): negli esperimenti condotti sono stati inizializzati casualmente, seguendo una distribuzione uniforme in $[0, 1)$. Questi due sono gli unici parametri che, una volta inizializzati, vengono modificati automaticamente dalla rete durante il training. I restanti parametri, come il numero di neuroni in uno strato hidden o il numero di strati, rimangono tali durante tutte le fasi di addestramento del modello; inoltre l'approccio tipicamente usato per individuare tali parametri, che prendono il nome di \textit{iperparametri}, è quello empirico, e di esso si parlerà nel Paragrafo \ref{iperparametri}.
@@ -143,7 +143,7 @@ Le reti considerate in questo lavoro vengono utilizzate per calcolare una regres
 \newpage
 \section{Addestramento di una rete neurale}
 Per continuare il parallelo con il sistema nervoso centrale umano, così come per l'attività di apprendimento occorre studiare, anche una rete neurale artificiale ha bisogno di ``studiare'': questa fase viene detta fase di addestramento (training).
-Una volta selezionato il dataset contenente un certo numero di esempi \footnote{un esempio è rappresentato da un insieme di feature e un target}, si procede a dividere tale insieme in due sottoinsiemi: per fare questo, negli esperimenti che verranno presentati più avanti, si è utilizzato un holdout di 80\% - 20\% rispettivamente per training set, che verrà usato per l'attività di apprendimento, e per il testing set, per valutare la bontà della rete su esempi che non ha ancora visto.
+Una volta selezionato il dataset contenente un certo numero di esempi \footnote{un esempio è rappresentato da un insieme di feature e un target.}, si procede a dividere tale insieme in due sottoinsiemi: per fare questo, negli esperimenti che verranno presentati più avanti, si è utilizzato un holdout di 80\% - 20\% rispettivamente per training set, che verrà usato per l'attività di apprendimento, e per il testing set, per valutare la bontà della rete su esempi che non ha ancora visto.
 Una soluzione alternativa sarebbe stata quella di fare una cross-validation, concetto spiegato nel Paragrafo \ref{crossvalidation}.
 
 \subsection{Fase di training}
@@ -167,7 +167,7 @@ Terminata la fase di training occorre verificare il comportamento della rete su 
 
 \section{Algoritmo di back-propagation}\label{backprop}
 L'apprendimento consiste nel determinare i pesi delle connessioni e i bias che permettono alla rete di fare predizioni accurate sul training set. In altre parole bisogna minimizzare l'errore quadratico medio di predizione, che è la loss function citata nel Paragrafo \ref{loss}.
-Il numero di argomenti della funzione da ottimizzare è molto elevato, e inoltre questa funzione è non-lineare, quindi non si possono utilizzare le tecniche classiche di ottimizzazione. La soluzione a questo problema consiste nell'utilizzare una tecnica locale e iterativa, nota come back-propagation ~\cite{Backpropagation}, che regola i pesi e i bias associati ai collegamenti. Quello che permette di fare è legare l'errore ottenuto in output da una rete neurale a un algoritmo di ottimizzazione locale di una funzione di errore, in questo caso l'errore quadratico medio di predizione degli esempi del training set. L'algoritmo utilizzato è quello del gradiente discendente che consiste nel modificare i parametri della rete sottraendo loro una frazione del gradiente \footnote{data una funzione $f$ e i suoi parametri $x$ e $y$, il gradiente della funzione $f(x, y)$, indicato con $\nabla f(x, y)$, è dato dal vettore $[\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}]$}.
+Il numero di argomenti della funzione da ottimizzare è molto elevato, e inoltre questa funzione è non-lineare, quindi non si possono utilizzare le tecniche classiche di ottimizzazione. La soluzione a questo problema consiste nell'utilizzare una tecnica locale e iterativa, nota come back-propagation ~\cite{Backpropagation}, che regola i pesi e i bias associati ai collegamenti. Quello che permette di fare è legare l'errore ottenuto in output da una rete neurale a un algoritmo di ottimizzazione locale di una funzione di errore, in questo caso l'errore quadratico medio di predizione degli esempi del training set. L'algoritmo utilizzato è quello del gradiente discendente che consiste nel modificare i parametri della rete sottraendo loro una frazione del gradiente \footnote{data una funzione $f$ e i suoi parametri $x$ e $y$, il gradiente della funzione $f(x, y)$, indicato con $\nabla f(x, y)$, è dato dal vettore $[\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}]$.}.
 Per l'aggiornamento del peso viene usata la seguente formula:
 $$W^n_x = W_x - \eta \left(\frac{\partial \mathrm{Error}}{\partial W_x}\right)$$ dove $W^n_x$ è il nuovo valore del peso, $W_x$ il vecchio peso, $\eta$ il learning rate \footnote{valore solitamente vicino allo 0; è il grado con cui la rete adatta i propri pesi, più è alto il learning rate e più impatto avrà l'errore propagato e viceversa.} e $\frac{\partial \mathrm{Error}}{\partial W_x}$ la derivata parziale dell'errore rispetto ai pesi. 
 
@@ -190,7 +190,7 @@ In questa categoria rientrano:
 \item{learning rate}: indica il grado con cui la rete modifica i propri pesi durante la fase di back-propagation;
 \item{numero di epoche}: indica il numero di volte che la rete ha visto tutti gli esempi del training set;
 \item{batch size}: indica dopo quanti esempi mostrati alla rete si aggiornano i pesi;
-\item{numero di neuroni per strato nascosto \footnote{in questo elaborato verranno usate reti neurali con zero, uno e due strati nascosti: per casi più complessi si può arrivare ad un numero maggiore di strati nascosti}}: indica il numero di neuroni per singolo strato;
+\item{numero di neuroni per strato nascosto \footnote{in questo elaborato verranno usate reti neurali con zero, uno e due strati nascosti: per casi più complessi si può arrivare ad un numero maggiore di strati nascosti.}}: indica il numero di neuroni per singolo strato;
 \item{funzione d'attivazione}: funzione che determina l'intensità d'attivazione del singolo neurone.
 \end{itemize}
 
@@ -200,7 +200,7 @@ Ogni volta che in questo elaborato verranno introdotti nuovi esperimenti ne verr
 Come indicato nel Paragrafo \ref{iperparametri}, per trovare il valore degli iperparametri bisogna basarsi su prove empiriche. In particolare, negli esperimenti condotti sono stati fissati a priori i valori per numero di epoche, batch size, numero di strati nascosti, learning rate e funzione d'attivazione. Il numero di neuroni dello strato nascosto è stato dimensionato usando una tecnica di model selection che prende il nome di cross-validation che verrà spiegata nel prossimo paragrafo.
 
 \subsection{Cross validation}\label{crossvalidation}
-Dopo aver diviso il training set dal testing set, viene utilizzato esclusivamente  il primo per la cross-validation. In particolare questo viene partizionato in $k$ sottoinsiemi (fold \footnote{l'idea è quella di suddividere gli $m$ esempi in $k$ gruppi di grandezza approssimativamente uguale, per semplicità si è deciso di mettere i primi $\frac{m}{k}$ elementi del training set nel primo fold e così via}) di cui uno di questi prenderà il nome di validation set e gli altri di training set. Per ogni valore possibile dell'iperparametro (o per ogni possibile configurazione se ci sono più iperparametri) vengono ripetuti $k$ processi di addestramento, ogni volta eliminando dal training set uno dei fold e utilizzando quet'ultimo per calcolare l'errore; si ottengono così $k$ errori di cui si calcola la media.
+Dopo aver diviso il training set dal testing set, viene utilizzato esclusivamente  il primo per la cross-validation. In particolare questo viene partizionato in $k$ sottoinsiemi (fold \footnote{l'idea è quella di suddividere gli $m$ esempi in $k$ gruppi di grandezza approssimativamente uguale, per semplicità si è deciso di mettere i primi $\frac{m}{k}$ elementi del training set nel primo fold e così via.}) di cui uno di questi prenderà il nome di validation set e gli altri di training set. Per ogni valore possibile dell'iperparametro (o per ogni possibile configurazione se ci sono più iperparametri) vengono ripetuti $k$ processi di addestramento, ogni volta eliminando dal training set uno dei fold e utilizzando quet'ultimo per calcolare l'errore; si ottengono così $k$ errori di cui si calcola la media.
 
 Se per esempio il training set venisse suddviso in tre fold, le permutazioni prese in considerazione saranno quelle descritte nella Figura \ref{foldDiagram}.
 
@@ -255,7 +255,7 @@ Per ridurre questo impatto negativo si stanno studiando diverse soluzioni tra cu
 \section{Pruning}\label{pruning}
 
 L’idea di fondo del pruning è semplice: ogni collegamento tra neuroni ha associato un peso che ne determina l’importanza (avrà letteralmente un peso maggiore nell’influenzare il risultato finale della rete quando il valore della connessione è molto alto o molto basso); da qui l’intuizione per cui, ignorando i collegamenti con peso tendente allo zero, non si altera significativamente il risultato della rete che si otterrebbe considerandoli ~\cite{Pruning}.
-Questo risultato si può ottenere azzerando tali connessioni, ossia mettendo a zero il valore nella matrice dei pesi relativo alla connessione che si intende eliminare. Facendo così però si ottiene solo una parte del risultato che si vuole raggiungere usando il pruning; essendo il valore a zero si potrà verificare l'accuratezza della rete prunata di una percentuale di connessioni, ma non si godrà della riduzione di memoria, in quanto la matrice avrà lo stesso numero di elementi e quindi bisogno dello stesso numero di byte in memoria. Per questo viene in aiuto una particolare struttura dati adatta alla rappresentazione di matrici sparse \footnote{per matrice sparsa si intende una matrice con un numero consistente di valori nulli}. 
+Questo risultato si può ottenere azzerando tali connessioni, ossia mettendo a zero il valore nella matrice dei pesi relativo alla connessione che si intende eliminare. Facendo così però si ottiene solo una parte del risultato che si vuole raggiungere usando il pruning; essendo il valore a zero si potrà verificare l'accuratezza della rete prunata di una percentuale di connessioni, ma non si godrà della riduzione di memoria, in quanto la matrice avrà lo stesso numero di elementi e quindi bisogno dello stesso numero di byte in memoria. Per questo viene in aiuto una particolare struttura dati adatta alla rappresentazione di matrici sparse \footnote{per matrice sparsa si intende una matrice con un numero consistente di valori nulli.}. 
 Due scelte possibili per la struttura dati che accoglie la matrice sparsa sono indicate di seguito.
 \begin{itemize}
 \item{\textbf{\textit{compressed sparse row}}} ~\cite{CSC}: vengono usati 3 vettori contenenti rispettivamente i valori non nulli della matrice letti riga per riga, gli indici di colonna e i puntatori ai primi valori non nulli delle righe descritti nel modo seguente: 
@@ -302,7 +302,7 @@ Ne viene proposta l'implementazione in pseudocodice:
 
 \subsection{Tasso di compressione}
 
-Il tasso di compressione ottenuto mediante pruning si può calcolare notando che quello che cambia è il numero di connessioni che vengono mantenute rispetto a quelle della rete originale. Denotando quindi con $\tau$ la soglia utilizzata \footnote{In questo elaborato la soglia per scartare i pesi è stata calcolata come $n$-esimo percentile rispetto alla distribuzione dei pesi nella matrice, per $n \in \{10, \dots, 90 \}$ (quindi per $n=10$ verranno scartate il 10\% circa delle connessioni tra due strati comunicanti e così via)}, $s_c$ lo spazio occupato dalla rete compressa composta dai pesi $\lbrace w_{ij} \,|\, w_{ij} \geq \tau \rbrace$ e $s$ lo spazio occupato dalla rete originale, la percentuale di memoria risparmiata può essere espressa tramite l'equazione
+Il tasso di compressione ottenuto mediante pruning si può calcolare notando che quello che cambia è il numero di connessioni che vengono mantenute rispetto a quelle della rete originale. Denotando quindi con $\tau$ la soglia utilizzata \footnote{In questo elaborato la soglia per scartare i pesi è stata calcolata come $n$-esimo percentile rispetto alla distribuzione dei pesi nella matrice, per $n \in \{10, \dots, 90 \}$ (quindi per $n=10$ verranno scartate il 10\% circa delle connessioni tra due strati comunicanti e così via).}, $s_c$ lo spazio occupato dalla rete compressa composta dai pesi $\lbrace w_{ij} \,|\, w_{ij} \geq \tau \rbrace$ e $s$ lo spazio occupato dalla rete originale, la percentuale di memoria risparmiata può essere espressa tramite l'equazione
 
 \begin{equation}
 \mathrm{ratio} = \frac{s_c}{s}
@@ -356,14 +356,14 @@ K-Means è un algoritmo di clustering iterativo. Si supponga di avere dei punti 
 \item{se i centroidi sono stati aggiornati si ripete iterativamente dal punto 2, altrimenti l’algoritmo ha trovato i $k$ centroidi}.
 \end{enumerate}
 
-L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans ~\cite{KMeansMiniBatch} \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html}, una versione ottimizzata della precedente euristica di Lloyd che permette di lavorare, ad ogni iterazione, su un sottoinsimene preso casualmente dei dati totali.
+L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans ~\cite{KMeansMiniBatch} \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html.}, una versione ottimizzata della precedente euristica di Lloyd che permette di lavorare, ad ogni iterazione, su un sottoinsimene preso casualmente dei dati totali.
 
 
 \chapter{Esperimenti}
 
 \section{Dataset utilizzati}
 L'obiettivo di questo tirocinio è quello di verificare l'efficacia di tecniche di compressione su una rete neurale col compito di risolvere il problema del predecessore trattato nel Paragrafo \ref{probPred}.
-Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo 01/03/2020}, con l’obiettivo di predire il valore di mercato del giocatore. Sono state usate due differenti tipi di reti: la prima sfrutta le API di Keras \footnote{https://keras.io/models/model/}, mentre la seconda è stata creata ad hoc al fine di poter sfruttare le nuove strutture dati introdotte da pruning, ovvero le matrici sparse, e weight sharing, con un vettore e una matrice per ogni strato.
+Si è deciso di cominciare focalizzandosi sul problema della regressione: è stato usato un dataset con informazioni relative alle caratteristiche dei giocatori di calcio Fifa 2019 \footnote{https://www.kaggle.com/karangadiya/fifa19, ultimo controllo 01/03/2020.}, con l’obiettivo di predire il valore di mercato del giocatore. Sono state usate due differenti tipi di reti: la prima sfrutta le API di Keras \footnote{https://keras.io/models/model/.}, mentre la seconda è stata creata ad hoc al fine di poter sfruttare le nuove strutture dati introdotte da pruning, ovvero le matrici sparse, e weight sharing, con un vettore e una matrice per ogni strato.
 
 Una volta conclusa questa parte si è affrontato il problema della compressione per il problema del predecessore usando un dataset descritto nel dettaglio nel Paragrafo \ref{probPred}.
 
@@ -374,7 +374,7 @@ D'ora in poi si utlizzerà il termine \textit{feature} per indicare una caratter
 Il primo dataset utilizzato è quello dei giocatori Fifa, composto da 89 feature e circa 18.2k esempi; il target da predire sarà il loro valore di mercato.
 Una volta eliminate le feature non necessarie all’esperimento (nome del giocatore, immagine del club, numero di maglia, ecc… ) si è proceduto a convertire tutte le feature rappresentate come stringhe (come ``Value'', ``Release clause'', ``Height'', ecc…) in float e a rimuovere dal dataset tutti gli esempi il cui ``Value'' risultasse superiore o uguale al valore minimo tra gli outlier trovati, questo per evitare una prestazione peggiore in fase di training e testing ~\cite{Outlier}. Inoltre i nomi delle squadre di appartenenza sono stati inclusi come feature significative e codificati in valori interi.
 
-Terminata questa fase preliminare si è deciso di considerare diverse alternative: la prima in cui vengono considerate tutte le feature a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y} calcolato rispetto al target fosse maggiore di 0.55.
+Terminata questa fase preliminare si è deciso di considerare diverse alternative: la prima in cui vengono considerate tutte le feature a disposizione, la seconda in cui vengono selezionate solamente quelle il cui indice di correlazione \footnote{Calcolato tramite il metodo corr di pandas che utilizza il coefficiente di correlazione di Pearson $\rho_{X,Y} = \frac{cov(X, Y)}{\sigma_X\sigma_Y}$ dove $cov$ è la covarianza, $\sigma_X$ la deviazione standard di X e $\sigma_Y$ la deviazione standard di Y.} calcolato rispetto al target fosse maggiore di 0.55.
 È stata considerata anche una terza opzione: selezionare la metà delle feature tramite la Principal Component Analysis (PCA) che permette di ridurre la dimensione di un insieme di dati costituito da un elevato numero di variabili interconnesse, mantenendo il più possibile la variabilità presente in esso ~\cite{PCA}. 
 
 \subsection{Problema del predecessore}\label{probPred}
@@ -390,7 +390,7 @@ Per questo problema sono stati utilizzati tre dataset, rispettivamente con $512$
 
 \section{Architettura delle reti}\label{architettura}
 \subsection{Rete Keras}
-La prima rete considerata è stata costruita sfruttando delle API di Keras \footnote{https://keras.io/models/model/}. La rete è composta da uno strato di input con un numero di neuroni pari al numero di feature considerate, pari a $\log_2 n$, uno strato hidden con $m$ neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta al Paragrafo \ref{crossvalidation}.
+La prima rete considerata è stata costruita sfruttando delle API di Keras \footnote{https://keras.io/models/model/.}. La rete è composta da uno strato di input con un numero di neuroni pari al numero di feature considerate, pari a $\log_2 n$, uno strato hidden con $m$ neuroni e uno strato di output con un singolo neurone. Per gli iper-parametri si è deciso di fissare learning rate, numero di epoche, batch size e funzione d'attivazione; per trovare il numero di neuroni per il singolo strato hidden, invece, si è usata una tecnica di model selection, modalità descritta al Paragrafo \ref{crossvalidation}.
 
 \subsection{Rete per il problema del predecessore}\label{reteAdHoc}
 Per il secondo problema sono state usate tre reti differenti:
@@ -402,8 +402,8 @@ Per il secondo problema sono state usate tre reti differenti:
 
 Per tutte e tre le versioni gli iperparametri usati sono:
 \begin{itemize}
-\item{momentum update}\footnote{valore che è compreso tra 0 e 1 che accelera la discesa del gradiente verso il minimo globale ~\cite{Momentum}}: $0.9$;
-\item{$\lambda$}\footnote{usato per nella regolarizzazione l2, valore aggiunto alla loss function che forza pesi a scalare, penalizzando i pesi più grandi, riducendo così il problema di overfitting ~\cite{L2}}: $10^{-5}$;
+\item{momentum update}\footnote{valore che è compreso tra 0 e 1 che accelera la discesa del gradiente verso il minimo globale ~\cite{Momentum}.}: $0.9$;
+\item{$\lambda$}\footnote{usato per nella regolarizzazione l2, valore aggiunto alla loss function che forza pesi a scalare, penalizzando i pesi più grandi, riducendo così il problema di overfitting ~\cite{L2}.}: $10^{-5}$;
 \item{batch size}: $64$;
 \item{epoche}: $20000$;
 \item{stop function}: vengono fissate due soglie, $s_1$ e $s_2$; l'apprendimento termina quando il valore della loss function non è inferiore a $s_1$ per $s_2$ volte consecutive; $s_1$ viene fissato inizialmente a 100 e poi aggiornato con il valore di loss più basso ottenuto e $s_2 = 4$.
@@ -441,15 +441,15 @@ $
 \end{itemize}
 
 \item{loss function}: errore quadratico medio \footnote{
-$\displaystyle{\frac{\sum_{i=1}^n \left(x_i - y_i\right)^2}{n}} \; \textit{dove x è l'i-esimo valore predetto, y è l'i-esimo target}$
+$\displaystyle{\frac{\sum_{i=1}^n \left(x_i - y_i\right)^2}{n}} \; \textit{dove x è l'i-esimo valore predetto, y è l'i-esimo target}$.
 };
 
 \item{ottimizzatore}: Adam (componente Keras) con
 
 \begin{itemize}
 \item{learning rate}: 0.001;
-\item{beta \footnote{rappresenta il tasso esponenziale di decay per la stima del momenutm}}: 0.9;
-\item{decay \footnote{quantità che viene utilizzata per abbassare il valore del learning rate, soprattutto quando si parte da un valore elevato. Questo fa in modo che, più ci si avvicini al minimo globale della funzione di loss, più i passi fatti verso tale punto sono piccoli e precisi}}: 0.0;
+\item{beta \footnote{rappresenta il tasso esponenziale di decay per la stima del momenutm.}}: 0.9;
+\item{decay \footnote{quantità che viene utilizzata per abbassare il valore del learning rate, soprattutto quando si parte da un valore elevato. Questo fa in modo che, più ci si avvicini al minimo globale della funzione di loss, più i passi fatti verso tale punto sono piccoli e precisi.}}: 0.0;
 \end{itemize}
 
 \item{numero epoche}: 100;
