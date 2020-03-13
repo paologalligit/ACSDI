@@ -20,7 +20,6 @@ $90$ & $1.30 \times 10^{-2}$ & $1.1 \times 10^{-2}$ & $65$ & $1.27 \times 10$ & 
 \end{adjustwidth}
 
 \par\null\par
-\par\null\par
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -45,6 +44,12 @@ $90$ & $8.11 \times 10^{-4}$ & $2.2 \times 10^{-1}$ & $165$ & $2.01$ & $7.97 \ti
 
 \par\null\par
 \par\null\par
+\par\null\par
+È interessante notare come, non comprimendo abbastanza, ovvero non più della metà delle connessioni, non si ottenga una matrice abbastanza sparsa da convernire l'utilizzo di strutture dati come le CSC; queste infatti occuperanno più spazio di una matrice densa più è alto il numero di valori non nulli in quanto useranno tre vettori, come descritto nel Paragrafo \ref{pruning}.
+In questo caso si può notare come lo spazio occupato dalla rete compressa fino al 50\% risulti maggiore di quello occupato dalla rete non compressa, sia per quanto riguarda la tabella sopra che per quelle successive.
+Ad esempio una matrice dei pesi, senza valori nulli, di dimensione $3 \times 3$ in cui i pesi sono rappresentati da float32, occuperà 36 bytes; usando invece una csc si occuperanno 88 bytes in memoria.
+
+\par\null\par
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -67,7 +72,7 @@ $90$ & $6.32 \times 10^{-6}$ & $1.1 \times 10$ & $5235$ & $4.9 \times 10^{-1}$ &
 \end{tabular}
 \end{adjustwidth}
 
-\newpage
+\null\par\null
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -90,8 +95,7 @@ $90$ & $2.93$ & $1.2 \times 10$ & $6$ & $1.17$ & $2.78 \times 10^{-3}$\\
 \end{tabular}
 \end{adjustwidth}
 
-\par\null\par
-\par\null\par
+\null\par\null
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -114,8 +118,7 @@ $90$ & $1.83 \times 10^{-1}$ & $5$ & $34$ & $4.1 \times 10^{-1}$ & $1.19 \times 
 \end{tabular}
 \end{adjustwidth}
 
-\par\null\par
-\par\null\par
+\null\par\null
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -138,7 +141,7 @@ $90$ & $1.43 \times 10^{-3}$ & $1.23 \times 10^{2}$ & $699$ & $6.7 \times 10^{-2
 \end{tabular}
 \end{adjustwidth}
 
-\newpage
+\null\par\null
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -161,8 +164,7 @@ $90$ & $1.332 \times 10$ & $8.1 \times 10$ & $4$ & $7.8 \times 10^{-1}$ & $2.03 
 \end{tabular}
 \end{adjustwidth}
 
-\par\null\par
-\par\null\par
+\null\par\null
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
@@ -185,8 +187,7 @@ $90$ & $8.32 \times 10^{-1}$ & $2.9 \times 10$ & $32$ & $3.9 \times 10^{-1}$ & $
 \end{tabular}
 \end{adjustwidth}
 
-\par\null\par
-\par\null\par
+\null\par\null
 
 \begin{adjustwidth}{0cm}{}
 \begin{tabular}{cccccc}
