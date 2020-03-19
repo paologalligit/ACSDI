@@ -378,7 +378,7 @@ Terminata questa fase preliminare si è deciso di considerare diverse alternativ
 È stata considerata anche una terza opzione: selezionare la metà delle feature tramite la Principal Component Analysis (PCA) che permette di ridurre la dimensione di un insieme di dati costituito da un elevato numero di variabili interconnesse, mantenendo il più possibile la variabilità presente in esso ~\cite{PCA}. 
 
 \subsection{Problema del predecessore in sequenze ordinate}\label{probPred}
-Se si vuole mantenere una lista di elementi ordinati per poi riuscire ad accedervi in poco tempo esistono delle strutture dati dedicate come ad esempio gli alberi binari bilanciati, tra cui i B-tree e i B+-tree ~\cite{BTree}. Il tempo di accesso a queste strutture dati è dell'ordine di $O(log\,n)$, dove $n$ è il numero totale di elementi. Nonostante questo sia uno dei risultati migliori usando le strutture dati attualmente a disposizione, si è pensato di sfruttare le reti neurali per predire la posizione di un elemento all'interno di una sequenza ordinata di elementi con l'obiettivo di predire una posizione nella sequenza, data una chiave da cercare, più velocemente ma ammettendo anche un margine d'errore. \\
+Se si vuole mantenere una lista di elementi ordinati per poi riuscire ad accedervi in poco tempo esistono delle strutture dati dedicate come ad esempio gli alberi binari bilanciati, tra cui i B-tree e i B+-tree ~\cite{BTree}. Il tempo di accesso a queste strutture dati è dell'ordine di $\lceil O(log_2\,m) \rceil$, dove $n$ è il numero totale di elementi. Nonostante questo sia uno dei risultati migliori usando le strutture dati attualmente a disposizione, si è pensato di sfruttare le reti neurali per predire la posizione di un elemento all'interno di una sequenza ordinata di elementi con l'obiettivo di predire una posizione nella sequenza, data una chiave da cercare, più velocemente ma ammettendo anche un margine d'errore. \\
 Formalmente, siano $x_1 \leq x_2 \leq \dots x_n$ gli $n$ elementi di input, con $x_i \in \mathbb{N}$.\\
 Il problema considerato è quindi il seguente: dato $x \in X = \{x_1, x_2, \dots, x_m\}$, restituire $\mathrm{pred}(x) \in \{1, 2, \dots m\}$, posizione del predecessore di $x$ nella sequenza.
 Il problema può essere risolto mediante una stima $\hat{F}$ della funzione di ripartizione empirica $F$ rispetto a $X$. La stima di $F$ viene ottenuta addestrando una rete sugli esempi $\{x_i, F(x_i)\}$, $i \in \{1, 2, \dots, m \}$; l'indice del predecessore di $x \in X$ può essere stimato mediante la formula seguente:
@@ -413,14 +413,14 @@ Per la rete 1 è stato usato un learning rate di $5 \times 10^{-4}$, mentre per 
 D'ora in poi ci si riferirà a queste reti come \textbf{NNX}, dove X indica il numero di strati.
 
 \subsection{Oragnizzazione dei dati}
-Per quanto riguarda il dataset Fifa, una volta mescolati gli esempi in maniera casuale, sono stati estratti l'80\% degli esempi come train set e il restante 20\% come test set. Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler della libreria Python sklearn \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html.} che utilizza la seguente formula:
+Per quanto riguarda il dataset Fifa, una volta mescolati gli esempi in maniera casuale, sono stati estratti l'80\% degli esempi come train set e il restante 20\% come test set. Ogni valore null all’interno dei set è stato poi sostituito con la media della relativa colonna e i valori scalati usando StandardScaler della libreria python sklearn \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html.} che utilizza la seguente formula:
 \begin{equation}
 z = \frac{x - u}{std}
 \label{standardscaler}
 \end{equation}
 dove $u$ è la media del campione e $std$ è la sua deviazione standard.
 
-Per il secondo dataset vengono usati tutti gli esempi nel training, dopo essere stati permutati casualmente; i target invece vengono ricavati tramite la funzione numpy linspace di Python che, dati due estremi di un intervallo e un intero $x$, restituisce un array di $x$ valori ordinati equamente spaziati compresi tra gli estremi indicati.
+Per il secondo dataset vengono usati tutti gli esempi nel training, dopo essere stati permutati casualmente; i target invece vengono ricavati tramite la funzione numpy linspace di python \footnote{https://docs.scipy.org/doc/numpy/reference/generated/numpy.linspace.html.} che, dati due estremi di un intervallo e un intero $x$, restituisce un array di $x$ valori ordinati equamente spaziati compresi tra gli estremi indicati.
 
 \subsection{Addrestramento}\label{relu}
 Per scegliere il giusto numero di neuroni per lo strato hidden della rete Keras al fine di predire il valore di mercato dei calciatori, si è proceduto con una cross-validation (Paragrafo \ref{crossvalidation}). Di seguito vengono riportati gli iper-parametri scelti per la rete:
@@ -540,7 +540,7 @@ Acc & Errore medio & h \\
 \begin{tabular}{ccc}
 Acc & Errore medio & h \\
 \midrule
-0.9927 & 0.03 & 200\\
+0.9927 & 0.03 & 190\\
 \bottomrule
 \end{tabular}
 
