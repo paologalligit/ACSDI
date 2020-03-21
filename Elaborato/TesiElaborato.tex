@@ -29,6 +29,11 @@
 \usepackage{changepage}
 \usepackage{pdfpages}
 \usepackage{float}
+\usepackage{multicol}
+\usepackage{subcaption} 
+
+
+\DeclareUnicodeCharacter{00A0}{ }
 
 \begin{document}
 
@@ -356,8 +361,11 @@ K-Means è un algoritmo di clustering iterativo. Si supponga di avere dei punti 
 \item{se i centroidi sono stati aggiornati si ripete iterativamente dal punto 2, altrimenti l’algoritmo ha trovato i $k$ centroidi}.
 \end{enumerate}
 
-L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans ~\cite{KMeansMiniBatch} \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html.}, una versione ottimizzata della precedente euristica di Lloyd che permette di lavorare, ad ogni iterazione, su un sottoinsimene preso casualmente dei dati totali.
+\input{KMeans}
 
+L’algoritmo usato è quello della libreria sklearn, MiniBatchKMeans ~\cite{KMeansMiniBatch} \footnote{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html.}, una versione ottimizzata della precedente euristica di Lloyd che permette di lavorare, ad ogni iterazione, su un sottoinsimene preso casualmente dei dati totali.
+\null\par\null
+Di seguito viene presentato un esempio grafico in due dimensioni di come l'algoritmo K-Means viene eseguito in ogni singola iterazione; l'obiettivo è trovare tre cluster in cui raggruppare i punti.
 
 \chapter{Esperimenti}
 
